@@ -30,7 +30,7 @@
  * @package TYPO3
  * @subpackage solr
  */
-class tx_solr_Util {
+class Tx_Solr_Util {
 
 	/**
 	 * Generates a site specific key using the site url, encryption key, and

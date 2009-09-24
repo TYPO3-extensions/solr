@@ -30,7 +30,7 @@
  * @package TYPO3
  * @subpackage solr
  */
-class tx_solr_querymodifier_Faceting implements tx_solr_QueryModifier {
+class Tx_Solr_QueryModifier_Faceting implements tx_solr_QueryModifier {
 
 	protected $configuration;
 	protected $facetParameters = array();

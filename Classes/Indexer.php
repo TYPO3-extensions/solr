@@ -30,7 +30,7 @@
  * @package TYPO3
  * @subpackage solr
  */
-class tx_solr_Indexer {
+class Tx_Solr_Indexer {
 
 	protected $page;
 

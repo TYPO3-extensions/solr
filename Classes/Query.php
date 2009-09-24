@@ -30,7 +30,7 @@
  * @package TYPO3
  * @subpackage solr
  */
-class tx_solr_Query {
+class Tx_Solr_Query {
 
 	const SORT_ASC = 'ASC';
 	const SORT_DESC = 'DESC';

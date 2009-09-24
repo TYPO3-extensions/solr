@@ -32,7 +32,7 @@ require_once($GLOBALS['PATH_solr'] . 'lib/SolrPhpClient/Apache/Solr/Service.php'
  * @package TYPO3
  * @subpackage solr
  */
-class tx_solr_SolrService extends Apache_Solr_Service implements t3lib_Singleton {
+class Tx_Solr_SolrService extends Apache_Solr_Service implements t3lib_Singleton {
 
 	const LUKE_SERVLET = 'admin/luke';
 	protected $luke = array();

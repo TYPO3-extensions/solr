@@ -30,7 +30,7 @@
  * @package TYPO3
  * @subpackage solr
  */
-class tx_solr_Search implements t3lib_Singleton {
+class Tx_Solr_Search implements t3lib_Singleton {
 
 	/**
 	 * An instance of the Solr service
