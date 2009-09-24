@@ -1,0 +1,40 @@
+{namespace solr=Tx_Solr_ViewHelpers}
+<div id="tx-solr-search">
+
+	<!-- search form -->
+	<!-- TODO: Accept charset -->
+	<f:form id="tx-solr-search-form" action="index" method="GET">
+		<input type="hidden" name="id" value="{targetPageId}" />
+		<f:translate key="searchWord" /> <f:form.textbox id="tx-solr-q" name="q" value="{q}" />
+		
+		<f:form.submit value="{f:translate(key='submit')}" />
+	</f:form>
+
+	<f:if condition="{hasSearched}">
+		<f:translate key="results_searched_for" /> {q}
+		###RESULTS.RANGE###
+
+		<f:if condition="{numberOfResults} > 0">
+			<f:then>
+				<solr:pageBrowser numberOfResults="{numberOfResults}" resultsPerPage="{settings.search.results.resultsPerPage}" pageBrowserConfiguration="{settings.search.results.pagebrowser}" />
+				<ul class="results-list">
+					<f:for each="{searchResponse.docs}"  as="document">
+						<li class="results-entry" style="background-color: transparent;">
+							<h5 class="results-topic"><!-- insert result number --><a href="{document.url}">{document.title}</a></h5>
+							<div class="results-teaser">
+								<p>{document.content}</p>
+								<p>Score: <em>{document.score}</em></p>
+						</div>
+					</li>
+					</f:for>
+				</ul>
+				<solr:pageBrowser numberOfResults="{numberOfResults}" resultsPerPage="{settings.search.results.resultsPerPage}" pageBrowserConfiguration="{settings.search.results.pagebrowser}" />
+			</f:then>
+			<f:else>
+				<f:translate key="no_results_nothing_found" />
+			</f:else>
+		</f:if>
+	</f:if>
+	
+
+</div>

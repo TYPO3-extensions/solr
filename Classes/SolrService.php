@@ -22,7 +22,7 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
-require_once($GLOBALS['PATH_solr'] . 'lib/SolrPhpClient/Apache/Solr/Service.php');
+require_once(t3lib_extMgm::extPath('solr') . 'Resources/Private/PHP/SolrPhpClient/Apache/Solr/Service.php');
 
 
 /**
@@ -45,21 +45,6 @@ class Tx_Solr_SolrService extends Apache_Solr_Service implements t3lib_Singleton
 	 */
 	protected $responseCache = null;
 	protected $hasSearched = false;
-
-
-	/**
-	 * constructor for class tx_solr_SolrService
-	 */
-	public function __construct() {
-			// FIXME move this to the constructor parameters
-		$solrConfiguration = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_solr.']['solr.'];
-
-		parent::__construct(
-			$solrConfiguration['host'],
-			$solrConfiguration['port'],
-			$solrConfiguration['path']
-		);
-	}
 
 	public function __destruct() {
 			// TODO make this customizable as it might impact on performance when committing too often

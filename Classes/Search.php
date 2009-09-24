@@ -41,8 +41,8 @@ class Tx_Solr_Search implements t3lib_Singleton {
 
 	protected $query;
 
-	public function __construct() {
-		$this->solr = t3lib_div::makeInstance('tx_solr_SolrService');
+	public function __construct($host, $port, $path) {
+		$this->solr = t3lib_div::makeInstance('tx_solr_SolrService', $host, $port, $path);
 	}
 
 	public function search(tx_solr_Query $query, $offset = 0, $limit = 10) {
