@@ -34,7 +34,7 @@
  * @package TYPO3
  * @subpackage solr
  */
-interface tx_solr_SubstitutePageIndexer {
+interface tx_solr_SubstitutePageIndexerInterface {
 
 	/**
 	 * returns a substitute document for the currently being indexed page

@@ -27,15 +27,22 @@
 
 
 /**
- * Template modifier interface
+ * QueryModifier interface, allows to modify search queries
  *
  * @author	Ingo Renner <ingo@typo3.org>
  * @package TYPO3
  * @subpackage solr
  */
-interface tx_solr_TemplateModifier {
+interface Tx_Solr_QueryModifierInterface {
 
-	public function modifyTemplate(tx_solr_Template $template);
+	/**
+	 * Modifies the given query and returns the modified query as result
+	 *
+	 * @param	tx_solr_Query	The query to modify
+	 * @return	tx_solr_Query	The modified query
+	 */
+	public function modifyQuery(Tx_Solr_Query $query);
+
 }
 
 ?>

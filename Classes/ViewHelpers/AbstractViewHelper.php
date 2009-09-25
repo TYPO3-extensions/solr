@@ -36,38 +36,14 @@
  * @version $Id: GravatarViewHelper.php 1356 2009-09-23 21:22:38Z bwaidelich $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class Tx_Solr_ViewHelpers_PageBrowserViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class Tx_Solr_ViewHelpers_AbstractViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
 
-	/**
-	 * Render the gravatar image
-	 *
-	 * @param integer $numberOfResults Number of total results
-	 * @param integer $resultsPerPage Results per page
-	 * @param array $pageBrowserConfiguration Page browser config
-	 * @return string The rendered image tag
-	 */
-	public function render($numberOfResults, $resultsPerPage, $pageBrowserConfiguration) {
-		$numberOfPages = intval($numberOfResults / $resultsPerPage)
-			+ (($numberOfResults % $resultsPerPage) == 0 ? 0 : 1);
-
-		$pageBrowserConfiguration = array_merge(
-			$pageBrowserConfiguration,
-			array(
-				'pageParameterName' => 'tx_solr_results|page',
-				'numberOfPages'     => $numberOfPages,
-				//'extraQueryString'  => '&tx_solr[q]=' . $this->search->getQuery()->getKeywords(), // TODO
-				'disableCacheHash'  => true,
-			)
-		);
-
-		//$pageBrowserConfiguration = Tx_Extbase_Utility_TypoScript::convertPlainArrayToTypoScriptArray($pageBrowserConfiguration);
-			// Get page browser
-		$cObj = t3lib_div::makeInstance('tslib_cObj');
-		$cObj->start(array(), '');
-
-		$pageBrowser = $cObj->cObjGetSingle('USER_INT', $pageBrowserConfiguration);
-
-		return $pageBrowser;
+	protected $search;
+	protected $settings;
+	
+	public function initialize() {
+		$this->search = $this->templateVariableContainer->get('search');
+		$this->settings = $this->templateVariableContainer->get('settings');
 	}
 }
 

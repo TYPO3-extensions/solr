@@ -36,7 +36,7 @@
  * @version $Id: GravatarViewHelper.php 1356 2009-09-23 21:22:38Z bwaidelich $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class Tx_Solr_ViewHelpers_PageBrowserViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class Tx_Solr_ViewHelpers_PageBrowserViewHelper extends Tx_Solr_ViewHelpers_AbstractViewHelper {
 
 	/**
 	 * Render the gravatar image
@@ -55,7 +55,7 @@ class Tx_Solr_ViewHelpers_PageBrowserViewHelper extends Tx_Fluid_Core_ViewHelper
 			array(
 				'pageParameterName' => 'tx_solr_results|page',
 				'numberOfPages'     => $numberOfPages,
-				//'extraQueryString'  => '&tx_solr[q]=' . $this->search->getQuery()->getKeywords(), // TODO
+				//'extraQueryString'  => '&tx_solr_results[q]=' . $this->search->getQuery()->getKeywords(),
 				'disableCacheHash'  => true,
 			)
 		);

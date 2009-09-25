@@ -28,13 +28,13 @@ plugin.tx_solr.settings {
 	}
 
 	search {
-		# TODO: move filter into query{}
-		filter =
 
 		targetPage = 0
 
 		query {
 			fields = content^40.0, title^5.0, keywords^2.0, tagsH1^5.0, tagsH2H3^3.0, tagsH4H5H6^2.0, tagsInline^1.0
+			# |-separated list of additional filters. filters look like FIELDNAME:value.
+			filter =
 		}
 
 		results {
@@ -168,8 +168,6 @@ plugin.tx_solr.settings {
 
 				// available place holders: @facetValue, @facetName, @facetText
 			removeFacetLinkText = @facetText (remove)
-
-			showAllLink.wrap = <li>|</li>
 		}
 	}
 

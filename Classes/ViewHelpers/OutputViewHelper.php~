@@ -36,7 +36,11 @@
  * @version $Id: GravatarViewHelper.php 1356 2009-09-23 21:22:38Z bwaidelich $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class Tx_Solr_ViewHelpers_OutputViewHelper extends Tx_Solr_ViewHelpers_AbstractViewHelper {
+class Tx_Solr_ViewHelpers_OutputViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+
+	protected function getSearch() {
+		return $this->templateVariableContainer->get('search');
+	}
 	/**
 	 * Render the gravatar image
 	 *
@@ -50,7 +54,7 @@ class Tx_Solr_ViewHelpers_OutputViewHelper extends Tx_Solr_ViewHelpers_AbstractV
 			// TODO check whether highlighting is enabled in TS at all
 			// TODO: Bug. If you post-process this with processDocumentField, you get a problem.
 		if ($variableName === 'content') {
-			$highlightedContent = $this->search->getHighlightedContent();
+			$highlightedContent = $this->getSearch()->getHighlightedContent();
 			if ($highlightedContent->{$document->id}->content[0]) {
 				$processedField = $this->utf8Decode(
 					$highlightedContent->{$resultDocument->id}->content[0]
@@ -65,7 +69,7 @@ class Tx_Solr_ViewHelpers_OutputViewHelper extends Tx_Solr_ViewHelpers_AbstractV
 
 	}
 	
-	/**
+		/**
 	 * takes a search result document and processes its fields according to the
 	 * instructions configured in TS. Currently available instructions are
 	 * 	* timestamp - converts a date field into a unix timestamp
@@ -78,7 +82,7 @@ class Tx_Solr_ViewHelpers_OutputViewHelper extends Tx_Solr_ViewHelpers_AbstractV
 	 * @return	array	An array with field values processed like defined in TS
 	 */
 	protected function processDocumentField(Apache_Solr_Document $document, $fieldName) {
-		$processingInstructions = $this->settings['search']['results']['fieldProcessingInstructions'];
+		$processingInstructions = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_solr.']['settings.']['search.']['results.']['fieldProcessingInstructions.'];
 
 		if (isset($processingInstructions[$fieldName])) {
 			// TODO allow to have multiple (commaseparated) instructions for each field

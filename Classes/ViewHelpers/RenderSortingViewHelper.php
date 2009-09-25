@@ -36,10 +36,7 @@
  * @version $Id: GravatarViewHelper.php 1356 2009-09-23 21:22:38Z bwaidelich $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class Tx_Solr_ViewHelpers_RenderSortingViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
-	protected function getSearch() {
-		return $this->templateVariableContainer->get('search');
-	}
+class Tx_Solr_ViewHelpers_RenderSortingViewHelper extends Tx_Solr_ViewHelpers_AbstractViewHelper {
 	/**
 	 * Render the gravatar image
 	 *
@@ -47,15 +44,13 @@ class Tx_Solr_ViewHelpers_RenderSortingViewHelper extends Tx_Fluid_Core_ViewHelp
 	 * @return string The rendered image tag
 	 */
 	public function render($fieldName) {
-		$settings = $this->templateVariableContainer->get('settings');
-
-		$query = $this->getSearch()->getQuery();
+		$query = $this->search->getQuery();
 		if ($this->controllerContext->getRequest()->hasArgument('sort')) {
 			$urlSortingParameter = $this->controllerContext->getRequest()->getArgument('sort');
 			list($currentSortByField, $currentSortDirection) = explode(' ', $urlSortingParameter);
 		}
 
-		$sortDirection = $settings['search']['sorting']['defaultOrder'];
+		$sortDirection = $this->settings['search']['sorting']['defaultOrder'];
 		$sortIndicator = $sortDirection;
 		$sortParameter = $fieldName . ' ' . $sortDirection;
 

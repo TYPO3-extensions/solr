@@ -158,7 +158,7 @@ class Tx_Solr_Indexer {
 			foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['solr']['Indexer']['indexPageAddDocuments'] as $classReference) {
 				$additionalIndexer = &t3lib_div::getUserObj($classReference);
 
-				if ($additionalIndexer instanceof tx_solr_AdditionalIndexer) {
+				if ($additionalIndexer instanceof Tx_Solr_AdditionalIndexerInterface) {
 					$additionalDocuments = $additionalIndexer->getAdditionalDocuments();
 
 					if (is_array($additionalDocuments)) {

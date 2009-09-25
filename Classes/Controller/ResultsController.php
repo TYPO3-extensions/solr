@@ -51,9 +51,25 @@ class Tx_Solr_Controller_ResultsController extends Tx_Extbase_MVC_Controller_Act
 	/**
 	 *
 	 * @param string $q
+	 * @param integer $page
 	 */
-	public function indexAction($q = '') {
-		$this->initializeSearch();
+	public function indexAction($q = '', $page = 0) {
+		
+		if ($this->settings['addDefaultCss']) {
+			// Search CSS
+			$pathToCssFile = $GLOBALS['TSFE']->config['config']['absRefPrefix']
+			. t3lib_extMgm::siteRelPath(Tx_Extbase_Utility_Extension::convertCamelCaseToLowerCaseUnderscored($this->request->getControllerExtensionName()))
+				. 'resources/templates/pi_results/results.css';
+			$this->response->addAdditionalHeaderData('<link href="' . $pathToCssFile . '" rel="stylesheet" type="text/css" />');
+			
+			// Page Browser CSS
+			$pathToCssFile = $GLOBALS['TSFE']->config['config']['absRefPrefix']
+			. t3lib_extMgm::siteRelPath('pagebrowse')
+				. 'res/styles_min.css';
+			$this->response->addAdditionalHeaderData('<link href="' . $pathToCssFile . '" rel="stylesheet" type="text/css" />');
+		}
+		
+		$this->initializeSearch($q, $page);
 		$this->view->assign('hasSearched', $this->search->hasSearched());
 		if ($this->search->hasSearched()) {
 			$this->view->assign('search', $this->search);
@@ -64,16 +80,12 @@ class Tx_Solr_Controller_ResultsController extends Tx_Extbase_MVC_Controller_Act
 		$this->view->assign('acceptCharset', $GLOBALS['TSFE']->metaCharset);
 	}
 	
-	protected function initializeSearch() {
-			// TODO provide the option in TS, too
-		//$emptyQuery = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'emptyQuery', 'sQuery');
-		$emptyQuery = FALSE;
+	protected function initializeSearch($query, $page) {
+		if ($this->solrAvailable && $query || $this->settings['search']['emptyQuery']) {
 
-		if ($this->solrAvailable && $this->request->hasArgument('q') || $emptyQuery) {
-			$query = $this->request->getArgument('q');
-
-			if ($emptyQuery) {
-					// TODO set rows to retrieve when searching to 0
+			if (!$query) {
+				// This is an empty query
+				// TODO set rows to retrieve when searching to 0
 			}
 
 			if ($this->settings['logging']['query']['searchWords']) {
@@ -92,7 +104,7 @@ class Tx_Solr_Controller_ResultsController extends Tx_Extbase_MVC_Controller_Act
 
 			if ($this->settings['search']['faceting']['enabled']) {
 				$query->setFaceting();
-				// TODO $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['solr']['modifySearchQuery']['faceting'] = 'EXT:solr/classes/querymodifier/class.tx_solr_querymodifier_faceting.php:tx_solr_querymodifier_Faceting';
+				$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['solr']['modifySearchQuery']['faceting'] = 'EXT:solr/Classes/querymodifier/Faceting.php:tx_solr_querymodifier_Faceting';
 			}
 
 			$query->setUserAccessGroups(explode(',', $GLOBALS['TSFE']->gr_list));
@@ -105,18 +117,15 @@ class Tx_Solr_Controller_ResultsController extends Tx_Extbase_MVC_Controller_Act
 			$query->addFilter('language:' . $language);
 
 			$additionalFilters = $this->settings['search']['filter'];
-			/*if (!empty($additionalFilters)) {
+			if (!empty($additionalFilters)) {
 				$additionalFilters = explode('|', $additionalFilters);
 				foreach($additionalFilters as $additionalFilter) {
 					$query->addFilter($additionalFilter);
 				}
-			}*/
+			}
 
-			// TODO PAGINGif ($)
-			//$currentPage    = max(0, intval($this->request['page']));
-			$currentPage = 0;
 			$resultsPerPage = $this->getNumberOfResultsPerPage();
-			$offSet         = $currentPage * $resultsPerPage;
+			$offSet         = $page * $resultsPerPage;
 
 				// ignore page browser?
 			$ignorePageBrowser = (boolean) $this->conf['search']['results']['ignorePageBrowser'];
@@ -128,11 +137,6 @@ class Tx_Solr_Controller_ResultsController extends Tx_Extbase_MVC_Controller_Act
 			if ($this->settings['searchResultsViewComponents']['sorting']) {
 				$query->setSorting();
 			}
-
-			/*$flexformSorting = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'sortBy', 'sQuery');
-			if (!empty($flexformSorting)) {
-				$query->addQueryParameter('sort', $flexformSorting);
-			}*/
 
 			$query = $this->modifyQuery($query);
 
@@ -164,7 +168,7 @@ class Tx_Solr_Controller_ResultsController extends Tx_Extbase_MVC_Controller_Act
 			foreach($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['solr']['modifySearchQuery'] as $classReference) {
 				$queryModifier = t3lib_div::getUserObj($classReference);
 
-				if ($queryModifier instanceof tx_solr_QueryModifier) {
+				if ($queryModifier instanceof Tx_Solr_QueryModifierInterface) {
 					$query = $queryModifier->modifyQuery($query);
 				}
 			}

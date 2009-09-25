@@ -29,11 +29,6 @@
 					</f:for>
 				</ul>
 				<solr:pageBrowser numberOfResults="{search.numberOfResults}" resultsPerPage="{settings.search.results.resultsPerPage}" pageBrowserConfiguration="{settings.search.results.pagebrowser}" />
-				
-				<div id="tx-solr-search-functions">
-					<f:render partial="faceting" arguments="{search:search, settings:settings}" />
-					<f:render partial="sorting" arguments="{search:search, settings:settings}" />
-				</div>
 			</f:then>
 			<f:else>
 				<f:translate key="no_results_nothing_found" />
@@ -41,5 +36,12 @@
 			
 		</f:if>
 	</f:if>
-	
+</div>
+<div id="tx-solr-search-functions">
+<f:if condition="{hasSearched}">
+	<f:if condition="{search.numberOfResults} > 0">
+		<f:render partial="faceting" arguments="{search:search, settings:settings}" />
+		<f:render partial="sorting" arguments="{search:search, settings:settings}" />
+	</f:if>
+</f:if>
 </div>

@@ -1,4 +1,5 @@
-<!-- ###SOLR_SEARCH_FACETING### begin -->
+{namespace solr=Tx_Solr_ViewHelpers}
+<f:if condition="{settings.search.faceting.enabled}">
 	<div id="tx-solr-faceting">
 		<!-- ###USED_FACETS### begin -->
 		<h3>###LLL:faceting_narrowSearch###</h3>
@@ -16,30 +17,29 @@
 		</div>
 		<!-- ###USED_FACETS### end -->
 
-		<!-- ###AVAILABLE_FACETS### begin -->
+		<!-- available facets -->
 		<div id="tx-solr-facets-available">
-			<h4>###LLL:faceting_narrowSearch###</h4>
+			<h4><f:translate key="faceting_narrowSearch" /></h4>
 			<ul class="facets">
-				<!-- ###SINGLE_FACET### begin -->
-				<li class="facet facet-###FACET.name###">
-					<h5>###FACET.label###</h5>
-					<ul>
-						<!-- ###SINGLE_FACET_OPTION### begin -->
-						<!-- ###LOOP:FACET_LINKS### begin -->
-						<!-- ###LOOP_CONTENT### -->
-						<li class="###FACET_LINK.HIDDEN###">
-							###FACET_LINK.LINK### ###FACET_LINK.COUNT###
+				<f:for each="{settings.search.faceting.facets}" as="facetConfiguration" key="facetName">
+					<f:if condition="{solr:facetNotEmpty(name='{facetName}')}">
+						<li class="facet facet-###FACET.name###">
+							<h5>{facetConfiguration.label}</h5>
+							<ul>
+								<f:for each="{solr:facetData(name='{facetName}' configuration='{facetConfiguration}')}" as="facetData">
+								<f:debug>{facetData}</f:debug>
+									<li class="{facetData.hiddenCssClass}">
+										<a href="{facetData.url}">{facetData.name} {facetData.count}</a>
+									</li>
+								</f:for>
+								<f:if condition="{f:count(subject='{solr:facetData(name=\'{facetName}\' configuration=\'{facetConfiguration}\')}')} > {settings.search.faceting.limit}">
+									<li><a href="#" class="tx-solr-facet-show-all"><f:translate key="faceting_showMore" /></a></li>
+								</f:if>
+							</ul>
 						</li>
-						<!-- ###LOOP_CONTENT### -->
-						<!-- ###LOOP:FACET_LINKS### end -->
-						<!-- ###SINGLE_FACET_OPTION### end -->
-						<li>###FACET.showAllLink###</li>
-					</ul>
-				</li>
-				<!-- ###SINGLE_FACET### end -->
+					</f:if>
+				</f:for>
 			</ul>
 		</div>
-		<!-- ###AVAILABLE_FACETS### end -->
 	</div>
-	<!-- ###SOLR_SEARCH_FACETING### end -->
-
+</f:if>
