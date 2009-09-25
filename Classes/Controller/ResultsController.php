@@ -169,6 +169,8 @@ class Tx_Solr_Controller_ResultsController extends Tx_Extbase_MVC_Controller_Act
 				$queryModifier = t3lib_div::getUserObj($classReference);
 
 				if ($queryModifier instanceof Tx_Solr_QueryModifierInterface) {
+					$queryModifier->setSettings($this->settings);
+					$queryModifier->setRequest($this->request);
 					$query = $queryModifier->modifyQuery($query);
 				}
 			}

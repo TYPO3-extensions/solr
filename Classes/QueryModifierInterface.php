@@ -35,6 +35,10 @@
  */
 interface Tx_Solr_QueryModifierInterface {
 
+	public function setRequest(Tx_Extbase_MVC_RequestInterface $request);
+	
+	public function setSettings(array $settings);
+	
 	/**
 	 * Modifies the given query and returns the modified query as result
 	 *

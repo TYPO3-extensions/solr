@@ -32,16 +32,23 @@
  */
 class Tx_Solr_QueryModifier_Faceting implements Tx_Solr_QueryModifierInterface {
 
-	protected $configuration;
-	protected $facetParameters = array();
-	protected $facetFilters    = array();
-
 	/**
-	 * constructor for class tx_solr_querymodifier_Faceting
+	 * @var Tx_Extbase_MVC_RequestInterface
 	 */
-	public function __construct() {
-		$this->configuration = tx_solr_Util::getSolrConfiguration();
+	protected $request;
+	
+	/**
+	 * @var array
+	 */
+	protected $settings;
+
+	public function setRequest(Tx_Extbase_MVC_RequestInterface $request) {
+		$this->request = $request;
 	}
+	public function setSettings(array $settings) {
+		$this->settings = $settings;
+	}
+	
 
 	/**
 	 * Modifies the given query and adds the parameters necessary for faceted
@@ -51,15 +58,15 @@ class Tx_Solr_QueryModifier_Faceting implements Tx_Solr_QueryModifierInterface {
 	 * @return	tx_solr_Query	The modified query with faceting parameters
 	 */
 	public function modifyQuery(tx_solr_Query $query) {
-		$this->buildFacetingParameters();
-		$this->addFacetQueryFilters();
+		$facetingParameters = $this->buildFacetingParameters();
+		$facetQueryFilters = $this->addFacetQueryFilters();
 
 
-		foreach ($this->facetParameters as $facetParameter => $value) {
+		foreach ($facetingParameters as $facetParameter => $value) {
 			$query->addQueryParameter($facetParameter, $value);
 		}
 
-		foreach ($this->facetFilters as $filter) {
+		foreach ($facetQueryFilters as $filter) {
 			$query->addFilter($filter);
 		}
 
@@ -67,85 +74,53 @@ class Tx_Solr_QueryModifier_Faceting implements Tx_Solr_QueryModifierInterface {
 	}
 
 	/**
-	 * Delegates the parameter building to specialized functions depending on
-	 * the type of facet to add.
+	 * Builds faceting parameters. This tells Solr what facets exist.
 	 *
 	 * @return	array	An array of query parameters
 	 */
 	protected function buildFacetingParameters() {
 		$facetingParameters = array();
-		$configuredFacets = $this->configuration['search.']['faceting.']['facets.'];
+		$configuredFacets = $this->settings['search']['faceting']['facets'];
 
 		foreach ($configuredFacets as $facetName => $facetConfiguration) {
-			$facetName = substr($facetName, 0, -1);
 
 			if (empty($facetConfiguration['field'])) {
 					// TODO later check for query and date, too
 				continue;
 			}
 
-			if (!empty($facetConfiguration['field'])) {
-				$this->buildFacetFieldParameters($facetConfiguration);
-			}
-		}
-	}
-
-	/**
-	 * Builds facet parameters for date field facets
-	 *
-	 * @param	array	A facet configuration
-	 * @return	void
-	 */
-	protected function buildFacetDateParameters() {
-		// not implemented yet
-	}
-
-	/**
-	 * Builds facet parameters for field facets
-	 *
-	 * @param	array	A facet configuration
-	 * @return	void
-	 */
-	protected function buildFacetFieldParameters(array $facetConfiguration) {
 			// very simple for now, may add overrides f.<field_name>.facet.* later
-		$this->facetParameters['facet.field'][] = $facetConfiguration['field'];
-	}
-
-	/**
-	 * Builds facet parameters for query facets
-	 *
-	 * @param	array	A facet configuration
-	 * @return	void
-	 */
-	protected function buildFacetQueryParameters() {
-
+			$facetingParameters['facet.field'][] = $facetConfiguration['field'];
+		}
+		return $facetingParameters;
 	}
 
 	/**
 	 * Adds filters specified through HTTP GET as filter query parameters to
 	 * the Solr query.
+	 * This is the place where facet choices are evaluated.
 	 *
 	 * @return void
 	 */
 	protected function addFacetQueryFilters() {
-		$resultParameters = t3lib_div::_GET('tx_solr');
-
+		$facetFilters = array();
 			// format for filter URL parameter:
 			// tx_solr[filter]=$facetName0:$facetValue0,$facetName1:$facetValue1,$facetName2:$facetValue2
-		if (isset($resultParameters['filter'])) {
-			$filters = explode(',', $resultParameters['filter']);
-			$configuredFacets = $this->getConfigurredFacets();
+		if ($this->request->hasArgument('filter')) {
+			$filters = explode(',', $this->request->getArgument('filter'));
+			$configuredFacets = $this->getConfiguredFacets();
 
 			foreach ($filters as $filter) {
 				list($filterName, $filterValue) = explode(':', $filter);
 
 				if (in_array($filterName, $configuredFacets)) {
 						// TODO support query and date facets
-					$this->facetFilters[] = $this->configuration['search.']['faceting.']['facets.'][$filterName . '.']['field']
+					$facetFilters[] = $this->settings['search']['faceting']['facets'][$filterName]['field']
 						. ':"' . $filterValue . '"';
 				}
 			}
 		}
+		return $facetFilters;
 	}
 
 	/**
@@ -153,13 +128,11 @@ class Tx_Solr_QueryModifier_Faceting implements Tx_Solr_QueryModifierInterface {
 	 *
 	 * @return	array	An array of facet names as specified in TypoScript
 	 */
-	protected function getConfigurredFacets() {
-		$configuredFacets = $this->configuration['search.']['faceting.']['facets.'];
+	protected function getConfiguredFacets() {
+		$configuredFacets = $this->settings['search']['faceting']['facets'];
 		$facets = array();
 
 		foreach ($configuredFacets as $facetName => $facetConfiguration) {
-			$facetName = substr($facetName, 0, -1);
-
 			if (empty($facetConfiguration['field'])) {
 					// TODO later check for query and date, too
 				continue;
