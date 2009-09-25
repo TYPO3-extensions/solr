@@ -36,17 +36,31 @@
  * @version $Id: GravatarViewHelper.php 1356 2009-09-23 21:22:38Z bwaidelich $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class Tx_Solr_ViewHelpers_FacetNotEmptyViewHelper extends Tx_Solr_ViewHelpers_AbstractFacetViewHelper {
-
+class Tx_Solr_ViewHelpers_AbstractFacetViewHelper extends Tx_Solr_ViewHelpers_AbstractViewHelper {
 
 	/**
-	 * Render the gravatar image
+	 * Renders a single facet option according to the rendering instructions
+	 * that may be given.
 	 *
-	 * @param string $name
-	 * @return string The rendered image tag
+	 * @param	string	The facet this option belongs to, used to determine the rendering instructions
+	 * @param	string	The facet option's raw string value.
+	 * @return	string	The facet option rendered according to rendering instructions if available
 	 */
-	public function render($name) {
-		return TRUE;
+	protected function renderFacetOption($facetName, $facetOption) {
+		$renderedFacetOption = $facetOption;
+
+		if (isset($this->settings['search']['faceting']['facets'][$facetName]['renderingInstruction'])) {
+			$facetConfiguration = Tx_Extbase_Utility_TypoScript::convertPlainArrayToTypoScriptArray($this->settings['search']['faceting']['facets'][$facetName]);
+			$cObj = t3lib_div::makeInstance('tslib_cObj');
+			$cObj->start(array('optionValue' => $facetOption));
+			$renderedFacetOption = $cObj->cObjGetSingle(
+				$facetConfiguration['renderingInstruction'],
+				$facetConfiguration['renderingInstruction.']
+			);
+		}
+		return $renderedFacetOption;
 	}
 }
+
+
 ?>

@@ -59,7 +59,7 @@ class Tx_Solr_Controller_ResultsController extends Tx_Extbase_MVC_Controller_Act
 			// Search CSS
 			$pathToCssFile = $GLOBALS['TSFE']->config['config']['absRefPrefix']
 			. t3lib_extMgm::siteRelPath(Tx_Extbase_Utility_Extension::convertCamelCaseToLowerCaseUnderscored($this->request->getControllerExtensionName()))
-				. 'resources/templates/pi_results/results.css';
+				. 'Resources/Public/CSS/results.css';
 			$this->response->addAdditionalHeaderData('<link href="' . $pathToCssFile . '" rel="stylesheet" type="text/css" />');
 			
 			// Page Browser CSS

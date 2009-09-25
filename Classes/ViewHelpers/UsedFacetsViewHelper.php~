@@ -36,7 +36,7 @@
  * @version $Id: GravatarViewHelper.php 1356 2009-09-23 21:22:38Z bwaidelich $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class Tx_Solr_ViewHelpers_FacetNotEmptyViewHelper extends Tx_Solr_ViewHelpers_AbstractFacetViewHelper {
+class Tx_Solr_ViewHelpers_FacetNotEmptyViewHelper extends Tx_Solr_ViewHelpers_AbstractViewHelper {
 
 
 	/**

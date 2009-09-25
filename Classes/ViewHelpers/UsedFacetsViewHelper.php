@@ -36,17 +36,59 @@
  * @version $Id: GravatarViewHelper.php 1356 2009-09-23 21:22:38Z bwaidelich $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class Tx_Solr_ViewHelpers_FacetNotEmptyViewHelper extends Tx_Solr_ViewHelpers_AbstractFacetViewHelper {
+class Tx_Solr_ViewHelpers_UsedFacetsViewHelper extends Tx_Solr_ViewHelpers_AbstractFacetViewHelper {
 
 
 	/**
 	 * Render the gravatar image
 	 *
-	 * @param string $name
 	 * @return string The rendered image tag
 	 */
-	public function render($name) {
-		return TRUE;
+	public function render() {
+		$facetsInUse = array();
+		
+		if ($this->controllerContext->getRequest()->hasArgument('filter')) {
+			
+			$filterParameters = explode(',', $this->controllerContext->getRequest()->getArgument('filter'));
+			foreach ($filterParameters as $filter) {
+				list($filterName, $filterValue) = explode(':', $filter);
+	
+				$facetText = $this->renderFacetOption($filterName, $filterValue);
+	
+				$removeFacetText = strtr(
+					$this->settings['search']['faceting']['removeFacetLinkText'],
+					array(
+						'@facetValue' => $filterValue,
+						'@facetName'  => $filterName,
+						'@facetText'  => $facetText
+					)
+				);
+
+				$removeFacetUrl = $this->buildRemoveFacetUrl($this->search->getQuery(), $filter, $filterParameters);
+	
+				$facetToRemove = array(
+					'removalUrl'  => $removeFacetUrl,
+					'text' => $removeFacetText,
+					'name' => $filterValue
+				);
+	
+				$facetsInUse[] = $facetToRemove;
+			}
+		}
+		return $facetsInUse;
+	}
+	
+	protected function buildRemoveFacetUrl($query, $facetToRemove, $filterParameters) {
+		$filterParameters = array_unique($filterParameters);
+		$indexToRemove = array_search($facetToRemove, $filterParameters);
+
+		if ($indexToRemove !== false) {
+			unset($filterParameters[$indexToRemove]);
+		}
+
+		return $query->getQueryUrl(
+			array('filter' => implode(',', $filterParameters))
+		);
 	}
 }
 ?>
