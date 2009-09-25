@@ -111,7 +111,7 @@ class Tx_Solr_Indexer {
 
 		try {
 				// get a solr instance
-			$solr = t3lib_div::makeInstance('tx_solr_SolrService');
+			$solr = t3lib_div::makeInstance('tx_solr_SolrService', $this->conf['solr.']['host'], $this->conf['solr.']['port'], $this->conf['solr.']['path']);
 
 				// do not continue if no server is available
 			if (!$solr->ping()) {
@@ -288,7 +288,7 @@ class Tx_Solr_Indexer {
 				$pageToDocumentPostProcessor = &t3lib_div::getUserObj($classReference);
 
 				if ($pageToDocumentPostProcessor instanceof Tx_Solr_PageDocumentPostProcessorInterface) {
-					$additionalDocuments = $pageToDocumentPostProcessor->processDocument($document, $pageId, $page);
+					$pageToDocumentPostProcessor->processDocument($document, $pageId, $page);
 				} else {
 					// TODO throw an exception
 				}

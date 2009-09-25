@@ -48,9 +48,9 @@ class Tx_Solr_ViewHelpers_AbstractFacetViewHelper extends Tx_Solr_ViewHelpers_Ab
 	 */
 	protected function renderFacetOption($facetName, $facetOption) {
 		$renderedFacetOption = $facetOption;
-
 		if (isset($this->settings['search']['faceting']['facets'][$facetName]['renderingInstruction'])) {
 			$facetConfiguration = Tx_Extbase_Utility_TypoScript::convertPlainArrayToTypoScriptArray($this->settings['search']['faceting']['facets'][$facetName]);
+			
 			$cObj = t3lib_div::makeInstance('tslib_cObj');
 			$cObj->start(array('optionValue' => $facetOption));
 			$renderedFacetOption = $cObj->cObjGetSingle(

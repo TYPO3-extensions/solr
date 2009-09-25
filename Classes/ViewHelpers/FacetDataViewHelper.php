@@ -66,7 +66,7 @@ class Tx_Solr_ViewHelpers_FacetDataViewHelper extends Tx_Solr_ViewHelpers_Abstra
 	
 				$facetData[] = array(
 					'url' => $this->buildAddFacetUrl($name . ':' . $facetOption),
-					'name' =>  $this->renderFacetOption($facetName, $facetOption),
+					'name' =>  $this->renderFacetOption($name, $facetOption),
 					'count' => $facetOptionResultCount,
 					'hiddenCssClass' => $facetHidden
 				);
