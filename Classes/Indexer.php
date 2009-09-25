@@ -34,11 +34,13 @@ class Tx_Solr_Indexer {
 
 	protected $page;
 
+	protected $conf;
+
 	/**
 	 * Constructor for class tx_solr_Indexer
 	 */
 	public function __construct() {
-
+		$this->conf = Tx_Solr_Util::getSolrConfiguration();
 	}
 
 	/**
@@ -50,7 +52,7 @@ class Tx_Solr_Indexer {
 	public function hook_indexContent(tslib_fe $page) {
 		$this->page = $page;
 
-		if ($page->config['config']['index_enable'] && $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_solr.']['index.']['enablePageIndexing']) {
+		if ($page->config['config']['index_enable'] && $this->conf['index.']['enablePageIndexing']) {
 			try {
 
 					// do some checks first
@@ -75,7 +77,7 @@ class Tx_Solr_Indexer {
 					);
 				}
 
-				if ($GLOBALS['TSFE']->beUserLogin && !$GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_solr.']['index.']['enableIndexingWhileBeUserLoggedIn']) {
+				if ($GLOBALS['TSFE']->beUserLogin && !$this->conf['index.']['enableIndexingWhileBeUserLoggedIn']) {
 					throw new Exception(
 						'Index page? No, Detected a BE user being logged in.',
 						1246444055
@@ -88,7 +90,7 @@ class Tx_Solr_Indexer {
 			} catch (Exception $e) {
 				$this->log($e->getMessage() . ' Error code: ' . $e->getCode(), 3);
 
-				if ($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_solr.']['logging.']['exceptions']) {
+				if ($this->conf['logging.']['exceptions']) {
 					t3lib_div::devLog('Exception while trying to index a page', 'tx_solr', 3, array(
 						$e->__toString()
 					));
@@ -121,7 +123,7 @@ class Tx_Solr_Indexer {
 		} catch (Exception $e) {
 			$this->log($e->getMessage() . ' Error code: ' . $e->getCode(), 3);
 
-			if ($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_solr.']['logging.']['exceptions']) {
+			if ($this->conf['logging.']['exceptions']) {
 				t3lib_div::devLog('exception while trying to index a page', 'tx_solr', 3, array(
 					$e->__toString()
 				));
@@ -188,7 +190,7 @@ class Tx_Solr_Indexer {
 			} catch (Exception $e) {
 				$this->log($e->getMessage() . ' Error code: ' . $e->getCode(), 2);
 
-				if ($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_solr.']['logging.']['exceptions']) {
+				if ($this->conf['logging.']['exceptions']) {
 					t3lib_div::devLog('Exception while adding documents', 'tx_solr', 3, array(
 						$e->__toString()
 					));
@@ -279,7 +281,19 @@ class Tx_Solr_Indexer {
 
 		$document = $this->addTagsToDocument($document, $content);
 
-			// TODO add a hook to allow post processing of the document
+		
+		// Hook for post processing
+		if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['solr']['Indexer']['pageToDocumentPostProcess'])) {
+			foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['solr']['Indexer']['pageToDocumentPostProcess'] as $classReference) {
+				$pageToDocumentPostProcessor = &t3lib_div::getUserObj($classReference);
+
+				if ($pageToDocumentPostProcessor instanceof Tx_Solr_PageDocumentPostProcessorInterface) {
+					$additionalDocuments = $pageToDocumentPostProcessor->processDocument($document, $pageId, $page);
+				} else {
+					// TODO throw an exception
+				}
+			}
+		}
 
 		return $document;
 	}
@@ -330,7 +344,7 @@ class Tx_Solr_Indexer {
 	 * @return 	array	an array of Apache_Solr_Document objects with additional fields
 	 */
 	protected function addTypoScriptConfiguredFieldsToDocuments(array $documents) {
-		$additionalFields = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_solr.']['index.']['additionalFields.'];
+		$additionalFields = $this->conf['index.']['additionalFields.'];
 
 		if (is_array($additionalFields)) {
 			foreach ($documents as $document) {
@@ -463,7 +477,7 @@ class Tx_Solr_Indexer {
 			}
 		}
 
-		if ($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_solr.']['logging.']['indexing']) {
+		if ($this->conf['logging.']['indexing']) {
 			t3lib_div::devLog($message, 'tx_solr', $errorNum, $logData);
 		}
 	}

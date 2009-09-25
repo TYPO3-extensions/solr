@@ -1,20 +1,18 @@
 {namespace solr=Tx_Solr_ViewHelpers}
 <f:if condition="{settings.search.faceting.enabled}">
 	<div id="tx-solr-faceting">
-		<!-- ###USED_FACETS### begin -->
-		<h3>###LLL:faceting_narrowSearch###</h3>
-		<div id="tx-solr-facets-in-use">
-			<h4>###LLL:faceting_resultsNarrowedBy###</h4>
-			<ul>
-				<!-- ###LOOP:FACETS_IN_USE### begin -->
-				<!-- ###LOOP_CONTENT### -->
-				<li>
-					<a href="###REMOVE_FACET.url###">###REMOVE_FACET.text###</a>
-				</li>
-				<!-- ###LOOP_CONTENT### -->
-				<!-- ###LOOP:FACETS_IN_USE### end -->
-			</ul>
-		</div>
+		<h3><f:translate key="faceting_narrowSearch" /></h3>
+		<!-- used facets -->
+		<f:if condition="{solr:usedFacets()}">
+			<div id="tx-solr-facets-in-use">
+				<h4><f:translate key="faceting_resultsNarrowedBy" /></h4>
+				<ul>
+					<f:for each="{solr:usedFacets()}" as="facet">
+						<li><a href="{facet.removalUrl}">{facet.text}</a></li>
+					</f:for>
+				</ul>
+			</div>
+		</f:if>
 		<!-- ###USED_FACETS### end -->
 
 		<!-- available facets -->
@@ -27,9 +25,8 @@
 							<h5>{facetConfiguration.label}</h5>
 							<ul>
 								<f:for each="{solr:facetData(name='{facetName}' configuration='{facetConfiguration}')}" as="facetData">
-								<f:debug>{facetData}</f:debug>
 									<li class="{facetData.hiddenCssClass}">
-										<a href="{facetData.url}">{facetData.name} {facetData.count}</a>
+										<a href="{facetData.url}">{facetData.name} ({facetData.count})</a>
 									</li>
 								</f:for>
 								<f:if condition="{f:count(subject='{solr:facetData(name=\'{facetName}\' configuration=\'{facetConfiguration}\')}')} > {settings.search.faceting.limit}">
@@ -41,5 +38,6 @@
 				</f:for>
 			</ul>
 		</div>
-	</div>
+	</di
+	v>
 </f:if>
