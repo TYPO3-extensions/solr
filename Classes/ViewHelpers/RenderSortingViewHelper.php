@@ -36,38 +36,66 @@
  * @version $Id: GravatarViewHelper.php 1356 2009-09-23 21:22:38Z bwaidelich $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class Tx_Solr_ViewHelpers_PageBrowserViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
-
+class Tx_Solr_ViewHelpers_RenderSortingViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+	protected function getSearch() {
+		return $this->templateVariableContainer->get('search');
+	}
 	/**
 	 * Render the gravatar image
 	 *
-	 * @param integer $numberOfResults Number of total results
-	 * @param integer $resultsPerPage Results per page
-	 * @param array $pageBrowserConfiguration Page browser config
+	 * @param string $fieldName
 	 * @return string The rendered image tag
 	 */
-	public function render($numberOfResults, $resultsPerPage, $pageBrowserConfiguration) {
-		$numberOfPages = intval($numberOfResults / $resultsPerPage)
-			+ (($numberOfResults % $resultsPerPage) == 0 ? 0 : 1);
+	public function render($fieldName) {
+		$settings = $this->templateVariableContainer->get('settings');
 
-		$pageBrowserConfiguration = array_merge(
-			$pageBrowserConfiguration,
-			array(
-				'pageParameterName' => 'tx_solr_results|page',
-				'numberOfPages'     => $numberOfPages,
-				//'extraQueryString'  => '&tx_solr[q]=' . $this->search->getQuery()->getKeywords(), // TODO
-				'disableCacheHash'  => true,
-			)
-		);
+		$query = $this->getSearch()->getQuery();
+		if ($this->controllerContext->getRequest()->hasArgument('sort')) {
+			$urlSortingParameter = $this->controllerContext->getRequest()->getArgument('sort');
+			list($currentSortByField, $currentSortDirection) = explode(' ', $urlSortingParameter);
+		}
 
-		//$pageBrowserConfiguration = Tx_Extbase_Utility_TypoScript::convertPlainArrayToTypoScriptArray($pageBrowserConfiguration);
-			// Get page browser
-		$cObj = t3lib_div::makeInstance('tslib_cObj');
-		$cObj->start(array(), '');
+		$sortDirection = $settings['search']['sorting']['defaultOrder'];
+		$sortIndicator = $sortDirection;
+		$sortParameter = $fieldName . ' ' . $sortDirection;
 
-		$pageBrowser = $cObj->cObjGetSingle('USER_INT', $pageBrowserConfiguration);
+		// toggle sorting direction for the current sorting field
+		if ($currentSortByField == $fieldName) {
+			switch ($currentSortDirection) {
+				case 'asc':
+					$sortDirection = 'desc';
+					$sortIndicator = 'asc';
+					break;
+				case 'desc':
+					$sortDirection = 'asc';
+					$sortIndicator = 'desc';
+					break;
+			}
 
-		return $pageBrowser;
+			$sortParameter = $fieldName . ' ' . $sortDirection;
+		}
+/*					// special case relevancy: just reset the search to normal behavior
+		if ($fieldName == 'relevancy') {
+			$temp['link'] = $query->getQueryLink(
+				'###LLL:' . $configuredSortingFields[$fieldName . '.']['label'] . '###',
+				array('sort' => null)
+			);
+			unset($temp['direction'], $temp['indicator']);
+		}
+
+		$sortingFields[] = $temp;
+*/
+
+		$url = $query->getQueryUrl(array('sort' => $sortParameter));
+		$this->templateVariableContainer->add('sortUrl', $url);
+		$this->templateVariableContainer->add('sortDirection', $sortDirection);
+		$this->templateVariableContainer->add('sortIndicator', $sortIndicator);
+		$output = $this->renderChildren();
+		$this->templateVariableContainer->remove('sortUrl');
+		$this->templateVariableContainer->remove('sortDirection');
+		$this->templateVariableContainer->remove('sortIndicator');
+
+		return $output;
 	}
 }
 

@@ -12,29 +12,34 @@
 
 	<f:if condition="{hasSearched}">
 		<f:translate key="results_searched_for" /> {q}
-		###RESULTS.RANGE###
+		<!--###RESULTS.RANGE###-->
 
-		<f:if condition="{numberOfResults} > 0">
+		<f:if condition="{search.numberOfResults} > 0">
 			<f:then>
-				<solr:pageBrowser numberOfResults="{numberOfResults}" resultsPerPage="{settings.search.results.resultsPerPage}" pageBrowserConfiguration="{settings.search.results.pagebrowser}" />
+				<solr:pageBrowser numberOfResults="{search.numberOfResults}" resultsPerPage="{settings.search.results.resultsPerPage}" pageBrowserConfiguration="{settings.search.results.pagebrowser}" />
 				<ul class="results-list">
-					<f:for each="{searchResponse.docs}"  as="document">
+					<f:for each="{search.response.docs}"  as="document">
 						<li class="results-entry" style="background-color: transparent;">
-							<h5 class="results-topic"><!-- insert result number --><a href="{document.url}">{document.title}</a></h5>
+							<h5 class="results-topic"><!-- insert result number --><a href="{solr:output('url' document='{document}')}"><solr:output document="{document}">title</solr:output></a></h5>
 							<div class="results-teaser">
-								<p>{document.content}</p>
-								<p>Score: <em>{document.score}</em></p>
+								<p><solr:output document="{document}">content</solr:output></p>
+								<p>Score: <em><solr:output document="{document}">score</solr:output></em></p>
 						</div>
 					</li>
 					</f:for>
 				</ul>
-				<solr:pageBrowser numberOfResults="{numberOfResults}" resultsPerPage="{settings.search.results.resultsPerPage}" pageBrowserConfiguration="{settings.search.results.pagebrowser}" />
+				<solr:pageBrowser numberOfResults="{search.numberOfResults}" resultsPerPage="{settings.search.results.resultsPerPage}" pageBrowserConfiguration="{settings.search.results.pagebrowser}" />
+				
+				<div id="tx-solr-search-functions">
+					<f:render partial="faceting" arguments="{search:search, settings:settings}" />
+					<f:render partial="sorting" arguments="{search:search, settings:settings}" />
+				</div>
 			</f:then>
 			<f:else>
 				<f:translate key="no_results_nothing_found" />
 			</f:else>
+			
 		</f:if>
 	</f:if>
 	
-
 </div>

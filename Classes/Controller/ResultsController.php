@@ -56,9 +56,7 @@ class Tx_Solr_Controller_ResultsController extends Tx_Extbase_MVC_Controller_Act
 		$this->initializeSearch();
 		$this->view->assign('hasSearched', $this->search->hasSearched());
 		if ($this->search->hasSearched()) {
-			$this->view->assign('numberOfResults', $this->search->getNumberOfResults());
-			$searchResponse = $this->search->getResponse();
-			$this->view->assign('searchResponse', $searchResponse);
+			$this->view->assign('search', $this->search);
 		}
 		$this->view->assign('q', $q);
 		$this->view->assign('targetPageId', $this->settings['search']['targetPage']);

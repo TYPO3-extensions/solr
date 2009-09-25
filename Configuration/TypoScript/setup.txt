@@ -117,12 +117,6 @@ plugin.tx_solr.settings {
 					label = sorting_type
 				}
 
-				# field does not exist yet
-				author = 0
-				author {
-					label = sorting_author
-				}
-
 				created = 1
 				created {
 					label = sorting_created

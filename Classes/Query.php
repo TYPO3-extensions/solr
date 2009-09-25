@@ -554,7 +554,7 @@ class Tx_Solr_Query {
 
 	public function setSorting($sort = true) {
 		if ($sort) {
-			$piVars = t3lib_div::_GP('tx_solr');
+			$piVars = t3lib_div::_GP('tx_solr_results');
 
 				// Validate sort parameter
 			if (isset($piVars['sort']) && preg_match('/^[a-z0-9_]+ (asc|desc)$/i', $piVars['sort'])) {
@@ -582,11 +582,11 @@ class Tx_Solr_Query {
 
 	// output
 
-
+/*
 	public function getQueryLink($linkText, array $additionalQueryParameters = array()) {
 		$cObj = t3lib_div::makeInstance('tslib_cObj');
 
-		$prefix = 'tx_solr';
+		$prefix = 'tx_solr_results';
 		$getPostParameters = t3lib_div::_GP($prefix);
 		$piVars = is_array($getPostParameters) ? $getPostParameters : array();
 
@@ -605,13 +605,13 @@ class Tx_Solr_Query {
 		);
 
 		return $cObj->typoLink($linkText, $linkConfiguration);
-	}
+	}*/
 
 	public function getQueryUrl(array $additionalQueryParameters = array()) {
 			// TODO find a way to remove duplicate code (@see getQueryLink)
 		$cObj = t3lib_div::makeInstance('tslib_cObj');
 
-		$prefix = 'tx_solr';
+		$prefix = 'tx_solr_results';
 		$getPostParameters = t3lib_div::_GP($prefix);
 		$piVars = is_array($getPostParameters) ? $getPostParameters : array();
 
@@ -630,12 +630,11 @@ class Tx_Solr_Query {
 		);
 
 		$cObj->typoLink('|', $linkConfiguration);
-
 		return $cObj->lastTypoLinkUrl;
 	}
 
 	public function removeUnwantedUrlParameters($urlParameters) {
-		$unwantedUrlParameters = array('resultsPerPage');
+		$unwantedUrlParameters = array('resultsPerPage', '__referrer');
 
 		foreach ($unwantedUrlParameters as $unwantedUrlParameter) {
 			unset($urlParameters[$unwantedUrlParameter]);

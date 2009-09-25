@@ -1,0 +1,15 @@
+{namespace solr=Tx_Solr_ViewHelpers}
+<div id="tx-solr-sorting">
+	<h3><f:translate key="sorting_sortBy" /></h3>
+	<ul>
+		<f:debug>{settings.search.sorting.fields}</f:debug>
+		<f:for each="{settings.search.sorting.fields}" as="fieldConfiguration" key="fieldName">
+		<f:debug>{fieldName}</f:debug>
+			<li>
+				<solr:renderSorting fieldName="{fieldName}">
+					<a href="{sortUrl}"><f:translate key="{fieldConfiguration.label}" /></a>
+				</solr:renderSorting>
+			</li>
+		</f:for>
+	</ul>
+</div>

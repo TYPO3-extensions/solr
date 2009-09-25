@@ -132,7 +132,7 @@ class Tx_Solr_Util {
 	public static function getSolrConfiguration() {
 			// TODO if in BE, create a fake TSFE and retrieve the configuration
 			// TODO merge flexform configuration
-		return $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_solr.'];
+		return $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_solr.']['settings.'];
 	}
 }
 
