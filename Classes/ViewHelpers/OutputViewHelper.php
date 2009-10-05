@@ -20,26 +20,13 @@
  *                                                                        */
 
 /**
- * View helper for rendering gravatar images.
- * See http://www.gravatar.com
- *
- * = Examples =
- *
- * <code>
- * <blog:gravatar emailAddress="foo@bar.com" size="40" defaultImageUri="someDefaultImage" />
- * </code>
- *
- * <output>
- * <img src="http://www.gravatar.com/avatar/4a28b782cade3dbcd6e306fa4757849d?d=someDefaultImage&s=40" />
- * </output>
+ * Outputs the document field for result displaying
  *
  * @version $Id: GravatarViewHelper.php 1356 2009-09-23 21:22:38Z bwaidelich $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class Tx_Solr_ViewHelpers_OutputViewHelper extends Tx_Solr_ViewHelpers_AbstractViewHelper {
 	/**
-	 * Render the gravatar image
-	 *
 	 * @param mixed $document
 	 * @return string The rendered image tag
 	 */

@@ -20,18 +20,8 @@
  *                                                                        */
 
 /**
- * View helper for rendering gravatar images.
- * See http://www.gravatar.com
- *
- * = Examples =
- *
- * <code>
- * <blog:gravatar emailAddress="foo@bar.com" size="40" defaultImageUri="someDefaultImage" />
- * </code>
- *
- * <output>
- * <img src="http://www.gravatar.com/avatar/4a28b782cade3dbcd6e306fa4757849d?d=someDefaultImage&s=40" />
- * </output>
+ * Abstract solr ViewHelper. Initializes $this->search with the Tx_Solr_Search class
+ * and $settings are the plugin settings.
  *
  * @version $Id: GravatarViewHelper.php 1356 2009-09-23 21:22:38Z bwaidelich $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later

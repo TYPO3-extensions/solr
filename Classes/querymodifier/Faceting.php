@@ -24,9 +24,15 @@
 
 
 /**
- * Modifies a query to add faceting parameters
+ * Modifies a query to add faceting parameters.
+ * Supports simple and hierarchical facets.
+ *
+ * Works together with the FacetDataViewHelper.
+ *
+ * For Hierarchical Facets, see
  *
  * @author	Ingo Renner <ingo@typo3.org>
+ * @author Sebastian Kurfuerst <sebastian@typo3.org>
  * @package TYPO3
  * @subpackage solr
  */
@@ -58,15 +64,18 @@ class Tx_Solr_QueryModifier_Faceting implements Tx_Solr_QueryModifierInterface {
 	 * @return	tx_solr_Query	The modified query with faceting parameters
 	 */
 	public function modifyQuery(tx_solr_Query $query) {
-		$facetingParameters = $this->buildFacetingParameters();
-		$facetQueryFilters = $this->addFacetQueryFilters();
+		
+		$queryParameters = $this->buildFacetingParameters();
+		$queryFilters = array();
+
+		$this->modifyQueryBasedOnCurrentFacetingRestrictions($queryFilters, $queryParameters);
 
 
-		foreach ($facetingParameters as $facetParameter => $value) {
+		foreach ($queryParameters as $facetParameter => $value) {
 			$query->addQueryParameter($facetParameter, $value);
 		}
 
-		foreach ($facetQueryFilters as $filter) {
+		foreach ($queryFilters as $filter) {
 			$query->addFilter($filter);
 		}
 
@@ -91,6 +100,10 @@ class Tx_Solr_QueryModifier_Faceting implements Tx_Solr_QueryModifierInterface {
 
 			// very simple for now, may add overrides f.<field_name>.facet.* later
 			$facetingParameters['facet.field'][] = $facetConfiguration['field'];
+
+			if ($facetConfiguration['hierarchical'] == 1) {
+				$facetingParameters['f.' . $facetConfiguration['field'] . '.facet.prefix']= '0-'; // default, will be overridden lateron in case something has been selected.
+			}
 		}
 		return $facetingParameters;
 	}
@@ -102,25 +115,29 @@ class Tx_Solr_QueryModifier_Faceting implements Tx_Solr_QueryModifierInterface {
 	 *
 	 * @return void
 	 */
-	protected function addFacetQueryFilters() {
-		$facetFilters = array();
-			// format for filter URL parameter:
-			// tx_solr[filter]=$facetName0:$facetValue0,$facetName1:$facetValue1,$facetName2:$facetValue2
-		if ($this->request->hasArgument('filter')) {
-			$filters = explode(',', $this->request->getArgument('filter'));
+	protected function modifyQueryBasedOnCurrentFacetingRestrictions(&$queryFilters, &$queryParameters) {
+		
+		if ($this->request->hasArgument('facetSelection')) {
+			$facetSelection = $this->request->getArgument('facetSelection');
 			$configuredFacets = $this->getConfiguredFacets();
 
-			foreach ($filters as $filter) {
-				list($filterName, $filterValue) = explode(':', $filter);
-
-				if (in_array($filterName, $configuredFacets)) {
-						// TODO support query and date facets
-					$facetFilters[] = $this->settings['search']['faceting']['facets'][$filterName]['field']
-						. ':"' . $filterValue . '"';
+			// facetName is the NAME of the faced as configured in settings->search->faceting->facets->XXX
+			// facetOption is the value on which the query should be narrowed down to.
+			foreach ($facetSelection as $facetName => $facetOption) {
+				$facetConfiguration = $this->settings['search']['faceting']['facets'][$facetName];
+				if (!in_array($facetName, $configuredFacets)) continue; // Safeguard!
+				if ($facetConfiguration['hierarchical'] == 1) {
+					// Hierarchical yes
+					$currentLevel = substr_count($facetOption, '/');
+					$queryFilters[] = $facetConfiguration['field'] . ':"' . $currentLevel . '-' . $facetOption . '"';
+					$queryParameters['f.' . $facetConfiguration['field'] . '.facet.prefix'] = $currentLevel+1 . '-' . $facetOption . '/'; // slash at the end to prevent ambiguity
+				} else {
+					// Not hierarchical
+					$queryFilters[] = $facetConfiguration['field'] . ':"' . $facetOption . '"';
 				}
 			}
+			
 		}
-		return $facetFilters;
 	}
 
 	/**
