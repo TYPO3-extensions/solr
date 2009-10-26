@@ -11,7 +11,7 @@
 	</f:form>
 
 	<f:if condition="{hasSearched}">
-		<f:translate key="results_searched_for" /> {q}
+		<f:translate key="results_searched_for" arguments="{0: q}" />
 		
 
 		<f:if condition="{search.numberOfResults} > 0">

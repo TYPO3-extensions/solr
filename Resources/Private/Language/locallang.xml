@@ -21,7 +21,7 @@
 			<label index="faceting_showMore">Show more</label>
 			<label index="faceting_showFewer">Show fewer</label>
 			<label index="results_range">Displaying results @resultsFrom to @resultsTo of @resultsTotal.</label>
-			<label index="results_searched_for">Searched for "@searchWord".</label>
+			<label index="results_searched_for">Searched for "%1$s".</label>
 			<label index="no_results_nothing_found">Nothing found for "@searchWord".</label>
 		</languageKey>
 		<languageKey index="de" type="array">
