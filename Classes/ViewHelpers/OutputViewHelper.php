@@ -28,10 +28,11 @@
 class Tx_Solr_ViewHelpers_OutputViewHelper extends Tx_Solr_ViewHelpers_AbstractViewHelper {
 	/**
 	 * @param mixed $document
+	 * @param string $field Name of the variable
 	 * @return string The rendered image tag
 	 */
-	public function render($document) {
-		$variableName = $this->renderChildren();
+	public function render($document, $field) {
+		$variableName = $field;
 		$processedField = $this->processDocumentField($document, $variableName);
 		
 			// TODO check whether highlighting is enabled in TS at all

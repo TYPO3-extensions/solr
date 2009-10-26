@@ -20,10 +20,9 @@
 				<ul class="results-list">
 					<f:for each="{search.response.docs}"  as="document">
 						<li class="results-entry" style="background-color: transparent;">
-							<h5 class="results-topic"><!-- insert result number --><a href="{solr:output('url' document='{document}')}"><solr:output document="{document}">title</solr:output></a></h5>
+							<h5 class="results-topic"><!-- insert result number --><a href="{solr:output(field:'url', document:document)}"><solr:output document="{document}" field="title" /></a></h5>
 							<div class="results-teaser">
-								<p><solr:output document="{document}">content</solr:output></p>
-								<p>Score: <em><solr:output document="{document}">score</solr:output></em></p>
+								<p><solr:output document="{document}" field="content" /></p>
 						</div>
 					</li>
 					</f:for>
