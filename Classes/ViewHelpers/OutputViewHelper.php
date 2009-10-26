@@ -40,7 +40,7 @@ class Tx_Solr_ViewHelpers_OutputViewHelper extends Tx_Solr_ViewHelpers_AbstractV
 			$highlightedContent = $this->search->getHighlightedContent();
 			if ($highlightedContent->{$document->id}->content[0]) {
 				$processedField = $this->utf8Decode(
-					$highlightedContent->{$resultDocument->id}->content[0]
+					$highlightedContent->{$document->id}->content[0]
 				);
 			}
 		}
