@@ -18,7 +18,7 @@
 										<a href="{facetOption.url}">{facetOption.name} ({facetOption.count})</a>
 									</li>
 								</f:for>
-								<f:if condition="{f:count(subject:'{facetOptions}')} > {settings.search.faceting.limit}">
+								<f:if condition="{f:count(subject:facetOptions)} > {settings.search.faceting.limit}">
 									<li><a href="#" class="tx-solr-facet-show-all"><f:translate key="faceting_showMore" /></a></li>
 								</f:if>
 							</ul>
