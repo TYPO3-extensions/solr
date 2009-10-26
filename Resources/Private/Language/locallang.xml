@@ -22,7 +22,7 @@
 			<label index="faceting_showFewer">Show fewer</label>
 			<label index="results_range">Displaying results @resultsFrom to @resultsTo of @resultsTotal.</label>
 			<label index="results_searched_for">Searched for "%1$s".</label>
-			<label index="no_results_nothing_found">Nothing found for "@searchWord".</label>
+			<label index="no_results_nothing_found">Nothing found for "%1$s".</label>
 		</languageKey>
 		<languageKey index="de" type="array">
 			<label index="searchUnavailable">Die Suche steht im Moment nicht zur Verfügung.</label>

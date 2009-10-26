@@ -30,7 +30,7 @@
 				<solr:pageBrowser numberOfResults="{search.numberOfResults}" resultsPerPage="{settings.search.results.resultsPerPage}" pageBrowserConfiguration="{settings.search.results.pagebrowser}" />
 			</f:then>
 			<f:else>
-				<f:translate key="no_results_nothing_found" />
+				<f:translate key="no_results_nothing_found" arguments="{0: q}" />
 			</f:else>
 			
 		</f:if>
