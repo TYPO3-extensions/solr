@@ -10,37 +10,37 @@
 	status report - tx_solr_report_SolrconfigStatus - checking against this
 	name property, that status check must be updated as well.
 -->
-<config name="tx_solr-2-9-0--20130114">
+<config name="tx_solr-3-0-0--20130610">
 
-	<luceneMatchVersion>LUCENE_36</luceneMatchVersion>
+	<luceneMatchVersion>LUCENE_44</luceneMatchVersion>
 
 
 	<abortOnConfigurationError>${solr.abortOnConfigurationError:true}</abortOnConfigurationError>
 
 
 	<!-- Tika / Solr Cell -->
-	<lib dir="../dist/" regex="apache-solr-cell-\d.*\.jar" />
+	<lib dir="../dist/" regex="solr-cell-\d.*\.jar" />
 	<lib dir="../contrib/extraction/lib" />
 
 	<!-- Clustering -->
-	<lib dir="../dist/" regex="apache-solr-clustering-\d.*\.jar" />
+	<lib dir="../dist/" regex="solr-clustering-\d.*\.jar" />
 	<lib dir="../contrib/clustering/lib/" />
 
 	<!-- Data Import Handler -->
-	<lib dir="../dist/" regex="apache-solr-dataimporthandler-.*\.jar" />
+	<lib dir="../dist/" regex="solr-dataimporthandler-.*\.jar" />
 	<lib dir="../contrib/dataimporthandler/lib/" />
 
 	<!-- Language Analysis Extras -->
-	<lib dir="../dist/" regex="apache-solr-analysis-extras-.*\.jar" />
+	<lib dir="../dist/" regex="solr-analysis-extras-.*\.jar" />
 	<lib dir="../contrib/analysis-extras/lib/" />
 	<lib dir="../contrib/analysis-extras/lucene-libs/" />
 
 	<!-- Language Identification -->
-	<lib dir="../dist/" regex="apache-solr-langid-\d.*\.jar" />
+	<lib dir="../dist/" regex="solr-langid-\d.*\.jar" />
 	<lib dir="../contrib/langid/lib/" regex=".*\.jar" />
 
 	<!-- Velocity Template Engine -->
-	<lib dir="../dist/" regex="apache-solr-velocity-\d.*\.jar" />
+	<lib dir="../dist/" regex="solr-velocity-\d.*\.jar" />
 	<lib dir="../contrib/velocity/lib" regex=".*\.jar" />
 
 	<!-- TYPO3 Plugins -->
@@ -232,17 +232,14 @@
 		</lst>
 	</requestHandler>
 
-
+<!--
 	<requestHandler name="/update" class="solr.XmlUpdateRequestHandler" />
-
-
 	<requestHandler name="/update/csv" class="solr.CSVRequestHandler" startup="lazy" />
-
-
 	<requestHandler name="/update/json" class="solr.JsonUpdateRequestHandler" startup="lazy" />
+-->
+    <requestHandler name="/update" class="solr.UpdateRequestHandler" />
 
-
-	<requestHandler name="/update/extract" class="org.apache.solr.handler.extraction.ExtractingRequestHandler" startup="lazy" />
+	<requestHandler name="/update/extract" class="org.apache.solr.handler.extraction.ExtractingRequestHandler" startup="lazy" />	
 
 
 	<requestHandler name="/analysis/field" class="solr.FieldAnalysisRequestHandler" startup="lazy" />

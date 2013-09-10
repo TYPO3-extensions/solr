@@ -6,12 +6,15 @@
 
 clear
 
-TOMCAT_VER=6.0.36
-SOLR_VER=3.6.2
+TOMCAT_VER=6.0.37
+SOLR_VER=4.4.0
 EXT_SOLR_VER=2.9
-EXT_SOLR_PLUGIN_VER=1.2.0
+EXT_SOLR_ACCESS_PLUGIN_VER=2.0
+EXT_SOLR_UTILS_PLUGIN_VER=1.1
+EXT_SOLR_LANG_PLUGIN_VER=3.1
 
-GITBRANCH_PATH="solr_$EXT_SOLR_VER.x"
+#GITBRANCH_PATH="solr_$EXT_SOLR_VER.x"
+GITBRANCH_PATH="dkd-develop-solr44"
 
 # Set default language for cores to download to english, if no commandline parameters are given
 if [ $# -eq 0 ]
@@ -194,18 +197,21 @@ TOMCAT_MAINVERSION=`echo "$TOMCAT_VER" | cut -d'.' -f1`
 wget --progress=bar:force http://apache.osuosl.org/tomcat/tomcat-$TOMCAT_MAINVERSION/v$TOMCAT_VER/bin/apache-tomcat-$TOMCAT_VER.zip 2>&1 | progressfilt
 
 cecho "Downloading Apache Solr $SOLR_VER" $green
-wget --progress=bar:force http://apache.osuosl.org/lucene/solr/$SOLR_VER/apache-solr-$SOLR_VER.zip 2>&1 | progressfilt
+wget --progress=bar:force http://archive.apache.org/dist/lucene/solr/$SOLR_VER/solr-$SOLR_VER.zip 2>&1 | progressfilt
 
 cecho "Unpacking Apache Tomcat." $green
 unzip -q apache-tomcat-$TOMCAT_VER.zip
 
 cecho "Unpacking Apache Solr." $green
-unzip -q apache-solr-$SOLR_VER.zip
+unzip -q solr-$SOLR_VER.zip
 
 mv apache-tomcat-$TOMCAT_VER tomcat
 
-cp apache-solr-$SOLR_VER/dist/apache-solr-$SOLR_VER.war tomcat/webapps/solr.war
-cp -r apache-solr-$SOLR_VER/example/solr .
+cp solr-$SOLR_VER/dist/solr-$SOLR_VER.war tomcat/webapps/solr.war
+cp solr-$SOLR_VER/example/lib/ext/*.jar tomcat/lib
+cp solr-$SOLR_VER/example/resources/log4j.properties tomcat/lib/log4j.properties
+cp -r solr-$SOLR_VER/example/solr .
+
 
 # ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 
@@ -273,15 +279,17 @@ wgetresource tomcat/solr.xml
 
 # copy libs
 cd /opt/solr-tomcat/
-cp -r apache-solr-$SOLR_VER/dist solr/
-cp -r apache-solr-$SOLR_VER/contrib solr/
+cp -r solr-$SOLR_VER/dist solr/
+cp -r solr-$SOLR_VER/contrib solr/
 
 # ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 
-cecho "Downloading the Solr TYPO3 plugin for access control. Version: $EXT_SOLR_PLUGIN_VER" $green
+cecho "Downloading the Solr TYPO3 plugin for access control. Version: $EXT_SOLR_ACCESS_PLUGIN_VER" $green
 mkdir solr/typo3lib
 cd solr/typo3lib
-wget --progress=bar:force http://www.typo3-solr.com/fileadmin/files/solr/solr-typo3-plugin-$EXT_SOLR_PLUGIN_VER.jar 2>&1 | progressfilt
+wget --progress=bar:force http://www.typo3-solr.com/fileadmin/files/solr/Solr4x/solr-typo3-access-$EXT_SOLR_ACCESS_PLUGIN_VER.jar 2>&1 | progressfilt
+wget --progress=bar:force http://www.typo3-solr.com/fileadmin/files/solr/Solr4x/solr-typo3-utils-$EXT_SOLR_UTILS_PLUGIN_VER.jar 2>&1 | progressfilt
+wget --progress=bar:force http://www.typo3-solr.com/fileadmin/files/solr/Solr4x/commons-lang3-$EXT_SOLR_LANG_PLUGIN_VER.jar 2>&1 | progressfilt
 
 # ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 
@@ -292,8 +300,8 @@ chmod a+x tomcat/bin/*
 # ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 
 cecho "Cleaning up." $green
-rm -rf apache-solr-$SOLR_VER.zip
-rm -rf apache-solr-$SOLR_VER
+rm -rf solr-$SOLR_VER.zip
+rm -rf solr-$SOLR_VER
 rm -rf apache-tomcat-$TOMCAT_VER.zip
 
 # ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----

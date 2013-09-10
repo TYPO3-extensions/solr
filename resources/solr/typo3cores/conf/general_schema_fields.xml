@@ -21,6 +21,8 @@
 		default: a value that should be used if no value is specified
 		  when adding a document.
 	-->
+	
+	<field name="_version_" type="long" indexed="true" stored="true" multiValued="false"/>
 
 	<!--
 		The document id is derived from a site-specific key (hash) and some
@@ -60,7 +62,7 @@
 		Here, default is used to create a "timestamp" field indicating when
 		the document was indexed.
 	-->
-	<field name="indexed" type="date" indexed="true" stored="true" default="NOW" />
+	<field name="indexed" type="date" indexed="true" stored="true" default="NOW/SECOND" />
 
 
 	<!-- system fields -->

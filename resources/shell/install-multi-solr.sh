@@ -8,12 +8,16 @@
 
 clear
 
-TOMCAT_VER=6.0.36
-DEFAULT_SOLR_VER=3.6.2
+TOMCAT_VER=6.0.37
+DEFAULT_SOLR_VER=4.4.0
 EXT_SOLR_VER=2.9
-EXT_SOLR_PLUGIN_VER=1.2.0
+EXT_SOLR_PLUGIN_VER=1.2.0 # for solr version older than 4x
+EXT_SOLR_ACCESS_PLUGIN_VER=2.0
+EXT_SOLR_UTILS_PLUGIN_VER=1.1
+EXT_SOLR_LANG_PLUGIN_VER=3.1
 
-GITBRANCH_PATH="solr_$EXT_SOLR_VER.x"
+#GITBRANCH_PATH="solr_$EXT_SOLR_VER.x"
+GITBRANCH_PATH="dkd-develop-solr44"
 
 AVAILABLE_LANGUAGES="arabic,armenian,basque,brazilian_portuguese,bulgarian,burmese,catalan,chinese,czech,danish,dutch,english,finnish,french,galician,german,greek,hindi,hungarian,indonesian,italian,japanese,khmer,korean,lao,norwegian,persian,polish,portuguese,romanian,russian,spanish,swedish,thai,turkish,ukrainian"
 
@@ -247,13 +251,30 @@ mv apache-tomcat-$TOMCAT_VER tomcat
 
 for SOLR in ${SOLR_VER[*]}
 do
+  SOLR_VER_PLAIN = $SOLR_VER
+  SOLR_VER_PLAIN = $(echo $SOLR_VER_PLAIN|sed 's/.//g')
+
+  if [ $SOLR_VER_PLAIN -le "400"]
+  then
+	SOLR_PACKAGE_NAME = "apache-solr"
+  else
+ 	SOLR_PACKAGE_NAME = "solr"
+  fi
+	
   cd /opt/solr-tomcat
   cecho "Downloading Apache Solr $SOLR" $green
-  wget --progress=bar:force http://apache.osuosl.org/lucene/solr/$SOLR/apache-solr-$SOLR.zip 2>&1 | progressfilt
+  wget --progress=bar:force http://archive.apache.org/dist/lucene/solr/$SOLR_VER/$SOLR_PACKAGE_NAME-$SOLR_VER.zip 2>&1 | progressfilt
   cecho "Unpacking Apache Solr." $green
-  unzip -q apache-solr-$SOLR.zip
-  cp apache-solr-$SOLR/dist/apache-solr-$SOLR.war tomcat/webapps/solr-$SOLR.war
-  cp -r apache-solr-$SOLR/example/solr solr/solr-$SOLR
+  unzip -q $SOLR_PACKAGE_NAME-$SOLR.zip
+  cp $SOLR_PACKAGE_NAME-$SOLR/dist/$SOLR_PACKAGE_NAME-$SOLR.war tomcat/webapps/solr-$SOLR.war
+  cp -r $SOLR_PACKAGE_NAME-$SOLR/example/solr solr/solr-$SOLR
+
+  if [ $SOLR_VER_PLAIN -ge "430"]
+  then
+  	cp $SOLR_PACKAGE_NAME-$SOLR/example/lib/ext/*.jar tomcat/lib
+  	cp $SOLR_PACKAGE_NAME-$SOLR/example/resources/log4j.properties tomcat/lib/log4j.properties
+  fi
+  
   # ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 
   cecho "Downloading TYPO3 Solr configuration files." $green
@@ -304,19 +325,27 @@ do
 
   # copy libs
   cd /opt/solr-tomcat/
-  cp -r apache-solr-$SOLR/dist solr/solr-$SOLR
-  cp -r apache-solr-$SOLR/contrib solr/solr-$SOLR
+  cp -r $SOLR_PACKAGE_NAME-$SOLR/dist solr/solr-$SOLR
+  cp -r $SOLR_PACKAGE_NAME-$SOLR/contrib solr/solr-$SOLR
 
   cecho "Cleaning up." $green
-  rm -rf /opt/solr-tomcat/apache-solr-$SOLR.zip
-  rm -rf /opt/solr-tomcat/apache-solr-$SOLR
+  rm -rf /opt/solr-tomcat/$SOLR_PACKAGE_NAME-$SOLR.zip
+  rm -rf /opt/solr-tomcat/$SOLR_PACKAGE_NAME-$SOLR
 
   # ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-
-  cecho "Downloading the Solr TYPO3 plugin for access control. Version: $EXT_SOLR_PLUGIN_VER" $green
   mkdir solr/solr-$SOLR/typo3lib
   cd solr/solr-$SOLR/typo3lib
-  wget --progress=bar:force http://www.typo3-solr.com/fileadmin/files/solr/solr-typo3-plugin-$EXT_SOLR_PLUGIN_VER.jar 2>&1 | progressfilt
+  if [ $SOLR_VER_PLAIN -ge "400"]
+  then
+	cecho "Downloading the Solr TYPO3 plugin for access control. Version: $EXT_SOLR_ACCESS_PLUGIN_VER" $green
+    wget --progress=bar:force http://www.typo3-solr.com/fileadmin/files/solr/Solr4x/solr-typo3-access-$EXT_SOLR_ACCESS_PLUGIN_VER.jar 2>&1 | progressfilt
+	wget --progress=bar:force http://www.typo3-solr.com/fileadmin/files/solr/Solr4x/solr-typo3-utils-$EXT_SOLR_UTILS_PLUGIN_VER.jar 2>&1 | progressfilt
+	wget --progress=bar:force http://www.typo3-solr.com/fileadmin/files/solr/Solr4x/commons-lang3-$EXT_SOLR_LANG_PLUGIN_VER.jar 2>&1 | progressfilt	
+  else 
+	cecho "Downloading the Solr TYPO3 plugin for access control. Version: $EXT_SOLR_PLUGIN_VER" $green
+    wget --progress=bar:force http://www.typo3-solr.com/fileadmin/files/solr/solr-typo3-plugin-$EXT_SOLR_PLUGIN_VER.jar 2>&1 | progressfilt
+  fi
+
 done
 
 # ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
