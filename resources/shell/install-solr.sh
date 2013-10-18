@@ -7,7 +7,7 @@
 clear
 
 TOMCAT_VER=6.0.37
-SOLR_VER=4.4.0
+SOLR_VER=4.5.0
 EXT_SOLR_VER=2.9
 EXT_SOLR_ACCESS_PLUGIN_VER=2.0
 EXT_SOLR_UTILS_PLUGIN_VER=1.1
@@ -197,7 +197,7 @@ TOMCAT_MAINVERSION=`echo "$TOMCAT_VER" | cut -d'.' -f1`
 wget --progress=bar:force http://apache.osuosl.org/tomcat/tomcat-$TOMCAT_MAINVERSION/v$TOMCAT_VER/bin/apache-tomcat-$TOMCAT_VER.zip 2>&1 | progressfilt
 
 cecho "Downloading Apache Solr $SOLR_VER" $green
-wget --progress=bar:force http://archive.apache.org/dist/lucene/solr/$SOLR_VER/solr-$SOLR_VER.zip 2>&1 | progressfilt
+wget --progress=bar:force http://mirror.dkd.de/apache/lucene/solr/$SOLR_VER/solr-$SOLR_VER.zip 2>&1 | progressfilt
 
 cecho "Unpacking Apache Tomcat." $green
 unzip -q apache-tomcat-$TOMCAT_VER.zip
@@ -256,6 +256,7 @@ rm solr.xml
 wgetresource solr/solr.xml
 
 # clean up
+rm -rf collection1
 rm -rf bin
 rm -rf conf
 rm -rf data
