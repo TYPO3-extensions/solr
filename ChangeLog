@@ -2,6 +2,10 @@
 
   * Changed install script to install Apache Tomcat 6.0.39
 
+2013-08-16  Ingo Renner  <ingo@typo3.org>
+
+	* Fixed an issue executing view helpers in user query strings
+
 2013-05-28  Stefan Sprenger  <stefan.sprenger@dkd.de>
 
   * Changed install script to install Apache Tomcat 6.0.37
@@ -26,6 +30,14 @@
 	* Fixed bug #41521: pages-TCA not fully loaded in SOLR_RELATION
 	* Fixed bug #46966: Autocomplete not working under TYPO3 6.1
 	* Fixed bug #44080: Use config.absRefPrefix for loading JavaScripts
+
+2013-04-04  Michel Tremblay <mictre@gmail.com>
+
+	* Fixed an XSS when plugin.tx_solr.search.keepExistingParametersForNewSearches is enabled
+
+2013-04-04  Gerrit Venema <venema.gerrit@wag.nl>
+
+	* Fixed an XSS in facet options
 
 2013-02-16  Kai Vogel <kai.vogel@speedprogs.de>
 

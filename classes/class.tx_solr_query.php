@@ -797,6 +797,10 @@ class tx_solr_Query {
 		$keywords = t3lib_div::removeXSS($keywords);
 		$keywords = htmlentities($keywords, ENT_QUOTES, $GLOBALS['TSFE']->metaCharset);
 
+		// escape triple hashes as they are used in the template engine
+		// TODO remove after switching to fluid templates
+		$keywords = tx_solr_Template::escapeMarkers($keywords);
+
 		return $keywords;
 	}
 
@@ -1035,8 +1039,8 @@ class tx_solr_Query {
 }
 
 
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/solr/classes/class.tx_solr_query.php'])	{
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/solr/classes/class.tx_solr_query.php']);
+if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/solr/classes/class.tx_solr_query.php'])	{
+	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/solr/classes/class.tx_solr_query.php']);
 }
 
 ?>

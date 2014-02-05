@@ -172,7 +172,7 @@ class tx_solr_Template {
 		}
 
 		foreach ($this->viewHelperIncludePath as $extensionKey => $viewHelperPath) {
-			$viewHelperRealPath = $viewHelperRealPath;
+			$viewHelperRealPath = $viewHelperPath;
 			if (t3lib_div::isFirstPartOfStr($viewHelperPath, 'classes/')) {
 				$viewHelperRealPath = substr($viewHelperPath, 8);
 			}
@@ -282,6 +282,22 @@ class tx_solr_Template {
 	}
 
 	/**
+	 * Escapes marker hashes and the pipe symbol so that they will not be
+	 * executed in templates.
+	 *
+	 * @param string $content Content potentially containing markers
+	 * @return string Content with markers escaped
+	 */
+	public static function escapeMarkers($content) {
+		// escape marker hashes
+		$content = str_replace('###', '&#35;&#35;&#35;', $content);
+		// escape pipe character used for parameter separation
+		$content = str_replace('|', '&#166;', $content);
+
+		return $content;
+	}
+
+	/**
 	 * cleans the template from non-replaced markers and subparts
 	 *
 	 * @return void
@@ -326,22 +342,24 @@ class tx_solr_Template {
 
 	/**
 	 * Renders view helpers, detects whether it is a regular marker view helper
-	 * or a subpart viewhelper and passes rendering on to more specialized
+	 * or a subpart view helper and passes rendering on to more specialized
 	 * render methods for each type.
 	 *
-	 * @param	string	the content to process by view helpers
-	 * @return	string	the view helper processed content
+	 * @param string $content The content to process by view helpers
+	 * @return string the view helper processed content
 	 */
 	protected function renderViewHelpers($content) {
 		$viewHelpersFound = $this->findViewHelpers($content);
 
 		foreach ($viewHelpersFound as $helperKey) {
-			$helper = $this->helpers[strtolower($helperKey)];
+			if (array_key_exists(strtolower($helperKey), $this->helpers)) {
+				$helper = $this->helpers[strtolower($helperKey)];
 
-			if ($helper instanceof tx_solr_SubpartViewHelper) {
-				$content = $this->renderSubpartViewHelper($helper, $helperKey, $content);
-			} else {
-				$content = $this->renderMarkerViewHelper($helper, $helperKey, $content);
+				if ($helper instanceof tx_solr_SubpartViewHelper) {
+					$content = $this->renderSubpartViewHelper($helper, $helperKey, $content);
+				} else {
+					$content = $this->renderMarkerViewHelper($helper, $helperKey, $content);
+				}
 			}
 		}
 
@@ -1048,8 +1066,8 @@ class tx_solr_Template {
 }
 
 
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/solr/classes/class.tx_solr_template.php'])	{
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/solr/classes/class.tx_solr_template.php']);
+if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/solr/classes/class.tx_solr_template.php'])	{
+	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/solr/classes/class.tx_solr_template.php']);
 }
 
 ?>

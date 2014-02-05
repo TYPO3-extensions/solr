@@ -452,7 +452,7 @@ abstract class tx_solr_pluginbase_PluginBase extends tslib_pibase {
 	 * Gets the user's query term and cleans it so that it can be used in
 	 * templates f.e.
 	 *
-	 * @return	string	The cleaned user query.
+	 * @return string The cleaned user query.
 	 */
 	public function getCleanUserQuery() {
 		$userQuery = $this->getRawUserQuery();
@@ -460,6 +460,10 @@ abstract class tx_solr_pluginbase_PluginBase extends tslib_pibase {
 		if (!is_null($userQuery)) {
 			$userQuery = tx_solr_Query::cleanKeywords($userQuery);
 		}
+
+		// escape triple hashes as they are used in the template engine
+		// TODO remove after switching to fluid templates
+		$userQuery = tx_solr_Template::escapeMarkers($userQuery);
 
 		return $userQuery;
 	}
@@ -475,8 +479,8 @@ abstract class tx_solr_pluginbase_PluginBase extends tslib_pibase {
 }
 
 
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/solr/classes/pluginbase/class.tx_solr_pluginbase_pluginbase.php'])	{
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/solr/classes/pluginbase/class.tx_solr_pluginbase_pluginbase.php']);
+if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/solr/classes/pluginbase/class.tx_solr_pluginbase_pluginbase.php'])	{
+	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/solr/classes/pluginbase/class.tx_solr_pluginbase_pluginbase.php']);
 }
 
 ?>

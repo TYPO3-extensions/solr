@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2012 Michel Tremblay <mictre@gmail.com>
+*  (c) 2012-2013 Michel Tremblay <mictre@gmail.com>
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -80,12 +80,13 @@ class tx_solr_pi_results_ParameterKeepingFormModifier implements tx_solr_FormMod
 		if ($this->parentPlugin instanceof tx_solr_pi_results && $this->configuration['search.']['keepExistingParametersForNewSearches']) {
 			foreach ($this->parentPlugin->piVars as $key => $value) {
 				$name = $this->parentPlugin->prefixId . '[' . $key . ']';
+
 				if (is_array($value)) {
 					foreach ($value as $k => $v) {
-						$hiddenFields[] = '<input type="hidden" name="' . $name . '[' . $k . ']" value="' . $v . '" />';
+						$hiddenFields[] = '<input type="hidden" name="' . $name . '[' . $k . ']" value="' . $this->cleanFormValue($v) . '" />';
 					}
 				} else {
-					$hiddenFields[] = '<input type="hidden" name="' . $name . '" value="' . $value . '" />';
+					$hiddenFields[] = '<input type="hidden" name="' . $name . '" value="' . $this->cleanFormValue($value) . '" />';
 				}
 			}
 		}
@@ -94,11 +95,27 @@ class tx_solr_pi_results_ParameterKeepingFormModifier implements tx_solr_FormMod
 
 		return $markers;
 	}
+
+	/**
+	 * Cleans a form value that needs to be carried over to the next request
+	 * from potential XSS.
+	 *
+	 * @param string $value Possibly malicious form field value
+	 * @return string Cleaned value
+	 */
+	private function cleanFormValue($value) {
+		$value = urldecode($value);
+
+		$value = filter_var(strip_tags($value), FILTER_SANITIZE_STRING);
+		$value = t3lib_div::removeXSS($value);
+
+		return urlencode($value);
+	}
 }
 
 
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/solr/pi_results/class.tx_solr_pi_results_parameterkeepingformmodifier.php'])	{
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/solr/pi_results/class.tx_solr_pi_results_parameterkeepingformmodifier.php']);
+if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/solr/pi_results/class.tx_solr_pi_results_parameterkeepingformmodifier.php'])	{
+	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/solr/pi_results/class.tx_solr_pi_results_parameterkeepingformmodifier.php']);
 }
 
 ?>

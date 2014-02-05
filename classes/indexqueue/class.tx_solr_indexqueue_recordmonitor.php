@@ -356,21 +356,25 @@ class tx_solr_indexqueue_RecordMonitor {
 	 * @return array Array of pages found to be mounting pages from the root line.
 	 */
 	protected function getDestinationMountPropertiesByRootLine(array $rootLine) {
-		$pageIds = array();
-		foreach ($rootLine as $pageRecord) {
-			$pageIds[] = $pageRecord['uid'];
+		$mountPages = array();
+		$pageIds    = array();
 
-			if ($pageRecord['is_siteroot']) {
-				break;
+		if (!empty($rootLine)) {
+			foreach ($rootLine as $pageRecord) {
+				$pageIds[] = $pageRecord['uid'];
+
+				if ($pageRecord['is_siteroot']) {
+					break;
+				}
 			}
-		}
 
-		$mountPages = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-			'uid, uid AS mountPageDestination, mount_pid AS mountPageSource, mount_pid_ol AS mountPageOverlayed',
-			'pages',
-			'doktype = 7 AND mount_pid IN(' . implode(',', $pageIds) . ')'
-				. t3lib_BEfunc::deleteClause('pages')
-		);
+			$mountPages = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
+				'uid, uid AS mountPageDestination, mount_pid AS mountPageSource, mount_pid_ol AS mountPageOverlayed',
+				'pages',
+				'doktype = 7 AND no_search = 0 AND mount_pid IN(' . implode(',', $pageIds) . ')'
+					. t3lib_BEfunc::deleteClause('pages')
+			);
+		}
 
 		return $mountPages;
 	}
@@ -443,8 +447,8 @@ class tx_solr_indexqueue_RecordMonitor {
 }
 
 
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/solr/classes/indexqueue/class.tx_solr_indexqueue_recordmonitor.php'])	{
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/solr/classes/indexqueue/class.tx_solr_indexqueue_recordmonitor.php']);
+if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/solr/classes/indexqueue/class.tx_solr_indexqueue_recordmonitor.php'])	{
+	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/solr/classes/indexqueue/class.tx_solr_indexqueue_recordmonitor.php']);
 }
 
 ?>

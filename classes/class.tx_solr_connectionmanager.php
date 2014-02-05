@@ -23,6 +23,10 @@
 ***************************************************************/
 
 
+if (version_compare(TYPO3_version, '6.1', '<=')) {
+	require_once(PATH_typo3 . 'interfaces/interface.backend_cacheActionsHook.php');
+}
+
 /**
  * A class to easily create a connection to a Solr server.
  *
@@ -558,8 +562,8 @@ class tx_solr_ConnectionManager implements t3lib_Singleton, backend_cacheActions
 }
 
 
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/solr/classes/class.tx_solr_connectionmanager.php'])	{
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/solr/classes/class.tx_solr_connectionmanager.php']);
+if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/solr/classes/class.tx_solr_connectionmanager.php'])	{
+	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/solr/classes/class.tx_solr_connectionmanager.php']);
 }
 
 ?>
