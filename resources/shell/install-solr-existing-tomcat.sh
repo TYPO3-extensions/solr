@@ -6,7 +6,7 @@
 
 clear
 
-TOMCAT_VER=6.0.37
+TOMCAT_VER=6.0.39
 SOLR_VER=3.6.2
 EXT_SOLR_VER=2.8
 EXT_SOLR_PLUGIN_VER=1.2.0
@@ -211,7 +211,7 @@ cd /opt/solr-tomcat/
 # wget --progress=bar:force http://apache.osuosl.org/tomcat/tomcat-$TOMCAT_MAINVERSION/v$TOMCAT_VER/bin/apache-tomcat-$TOMCAT_VER.zip 2>&1 | progressfilt
 
 cecho "Downloading Apache Solr $SOLR_VER" $green
-wget --progress=bar:force http://apache.osuosl.org/lucene/solr/$SOLR_VER/apache-solr-$SOLR_VER.zip 2>&1 | progressfilt
+wget --progress=bar:force http://archive.apache.org/dist/lucene/solr/$SOLR_VER/apache-solr-$SOLR_VER.zip 2>&1 | progressfilt
 
 # We are using an existing tomcat installation
 #
