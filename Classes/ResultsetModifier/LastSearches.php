@@ -46,6 +46,11 @@ class Tx_Solr_ResultsetModifier_LastSearches implements Tx_Solr_ResultSetModifie
 	public function modifyResultSet(Tx_Solr_PiResults_ResultsCommand $resultCommand, array $resultSet) {
 		$this->configuration = $resultCommand->getParentPlugin()->getConfiguration();
 		$keywords = $resultCommand->getParentPlugin()->getSearch()->getQuery()->getKeywordsCleaned();
+		
+		$keywords = trim($keywords);
+		if(empty($keywords)) {
+			return $resultSet;
+		}
 
 		switch ($this->configuration['search.']['lastSearches.']['mode']) {
 			case 'user':
