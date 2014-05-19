@@ -1255,7 +1255,12 @@ class Apache_Solr_Service
 	public function getSynonyms()
 	{
 		$response = $this->_sendRawGet($this->_synonymsUrl);
-		return get_object_vars(json_decode($response->getRawResponse())->synonymMappings->managedMap);
+		$responseRaw = $response->getRawResponse();
+		if(empty($responseRaw)) {
+			return array();
+		}
+
+		return get_object_vars(json_decode($responseRaw)->synonymMappings->managedMap);
 	}
 
 	/**
