@@ -99,16 +99,14 @@ class Tx_Solr_ContentObject_Relation {
 		return $result;
 	}
 
+
 	/**
 	 * Gets the related items of the current record's configured field.
 	 *
-	 * @param	array	$configuration for the content object
 	 * @param	tslib_cObj	$parentContentObject parent content object
 	 * @return	array	Array of related items, values already resolved from related records
 	 */
 	protected function getRelatedItems(tslib_cObj $parentContentObject) {
-		$relatedItems = array();
-
 		list($localTableName, $localRecordUid) = explode(':', $parentContentObject->currentRecord);
 
 		$GLOBALS['TSFE']->includeTCA();
@@ -117,10 +115,14 @@ class Tx_Solr_ContentObject_Relation {
 		} else {
 			t3lib_div::loadTCA($localTableName);
 		}
-		$localTableTca  = $GLOBALS['TCA'][$localTableName];
 
+		$localTableTca  = $GLOBALS['TCA'][$localTableName];
 		$localFieldName = $this->configuration['localField'];
 		$localFieldTca  = $localTableTca['columns'][$localFieldName];
+
+		if (!isset($localTableTca['columns'][$localFieldName])) {
+			return [];
+		}
 
 		if (isset($localFieldTca['config']['MM']) && trim($localFieldTca['config']['MM']) !== '') {
 			$relatedItems = $this->getRelatedItemsFromMMTable($localTableName, $localRecordUid, $localFieldTca);
