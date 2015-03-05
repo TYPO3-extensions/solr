@@ -141,7 +141,7 @@ class Tx_Solr_IndexQueue_PageIndexerRequest {
 			)
 		));
 
-		$rawResponse = file_get_contents($url, FALSE, $context);
+		$rawResponse = @file_get_contents($url, FALSE, $context);
 
 			// convert JSON response to response object properties
 		$decodedResponse = $response->getResultsFromJson($rawResponse);
