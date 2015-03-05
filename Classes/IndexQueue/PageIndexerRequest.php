@@ -141,7 +141,7 @@ class Tx_Solr_IndexQueue_PageIndexerRequest {
 			)
 		));
 
-		$rawResponse = @file_get_contents($url, FALSE, $context);
+		$rawResponse = file_get_contents($url, FALSE, $context);
 
 			// convert JSON response to response object properties
 		$decodedResponse = $response->getResultsFromJson($rawResponse);
@@ -209,6 +209,7 @@ class Tx_Solr_IndexQueue_PageIndexerRequest {
 			'actions'   => implode(',', $this->actions),
 			'hash'      => md5(
 				$itemId . '|' .
+				$pageId . '|' .
 				$GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']
 			)
 		);
