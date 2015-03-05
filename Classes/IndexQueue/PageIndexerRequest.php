@@ -209,7 +209,6 @@ class Tx_Solr_IndexQueue_PageIndexerRequest {
 			'actions'   => implode(',', $this->actions),
 			'hash'      => md5(
 				$itemId . '|' .
-				$pageId . '|' .
 				$GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']
 			)
 		);
