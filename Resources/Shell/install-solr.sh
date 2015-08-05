@@ -206,7 +206,7 @@ TOMCAT_MAINVERSION=`echo "$TOMCAT_VERSION" | cut -d'.' -f1`
 wget --progress=bar:force http://mirror.dkd.de/apache/tomcat/tomcat-$TOMCAT_MAINVERSION/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.zip 2>&1 | progressfilt
 
 cecho "Downloading Apache Solr $SOLR_VERSION" $green
-wget --progress=bar:force http://mirror.dkd.de/apache/lucene/solr/$SOLR_VERSION/solr-$SOLR_VERSION.zip 2>&1 | progressfilt
+wget --progress=bar:force http://archive.apache.org/dist/lucene/solr/$SOLR_VERSION/solr-$SOLR_VERSION.zip 2>&1 | progressfilt
 
 cecho "Unpacking Apache Tomcat." $green
 unzip -q apache-tomcat-$TOMCAT_VERSION.zip
