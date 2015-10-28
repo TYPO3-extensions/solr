@@ -70,7 +70,14 @@ class Tx_Solr_IndexQueue_Indexer extends Tx_Solr_IndexQueue_AbstractIndexer {
 	 *
 	 * @var array
 	 */
-	protected $sysLanguageOverlay = array();
+	protected static $sysLanguageOverlay = array();
+
+	/**
+	 * Cache of the sys_language_content information
+	 *
+	 * @var array
+	 */
+	protected static $sysLanguageContent = array();
 
 
 	/**
@@ -176,23 +183,36 @@ class Tx_Solr_IndexQueue_Indexer extends Tx_Solr_IndexQueue_AbstractIndexer {
 	protected function getFullItemRecord(Tx_Solr_IndexQueue_Item $item, $language = 0) {
 		$rootPageUid = $item->getRootPageUid();
 		$overlayIdentifier = $rootPageUid . '|' . $language;
-		if (!isset($this->sysLanguageOverlay[$overlayIdentifier])) {
+		if (!isset(self::$sysLanguageOverlay[$overlayIdentifier])) {
 			Tx_Solr_Util::initializeTsfe($rootPageUid, $language);
-			$this->sysLanguageOverlay[$overlayIdentifier] = $GLOBALS['TSFE']->sys_language_contentOL;
+			self::$sysLanguageContent[$overlayIdentifier] = $GLOBALS['TSFE']->sys_language_content;
+			self::$sysLanguageOverlay[$overlayIdentifier] = $GLOBALS['TSFE']->sys_language_contentOL;
 		}
 
 		$itemRecord = $item->getRecord();
 
 		if ($language > 0) {
 			$page = t3lib_div::makeInstance('t3lib_pageSelect');
+			/** @var t3lib_pageSelect $page */
 			$page->init(FALSE);
 
-			$itemRecord = $page->getRecordOverlay(
+			$localizedItemRecord = $page->getRecordOverlay(
 				$item->getType(),
 				$itemRecord,
 				$language,
-				$this->sysLanguageOverlay[$rootPageUid . '|' . $language]
+				self::$sysLanguageOverlay[$overlayIdentifier]
 			);
+			if (!isset($localizedItemRecord['_LOCALIZED_UID'])) {
+				$localizedItemRecord = $page->getRecordOverlay(
+					$item->getType(),
+					$itemRecord,
+					self::$sysLanguageContent[$overlayIdentifier],
+					self::$sysLanguageOverlay[$overlayIdentifier]
+				);
+			}
+			if ($localizedItemRecord) {
+				$itemRecord = $localizedItemRecord;
+			}
 		}
 
 		if (!$itemRecord) {
@@ -227,7 +247,7 @@ class Tx_Solr_IndexQueue_Indexer extends Tx_Solr_IndexQueue_AbstractIndexer {
 
 		$languageField = $GLOBALS['TCA'][$item->getType()]['ctrl']['languageField'];
 		if ($itemRecord[$translationOriginalPointerField] == 0
-			&& $this->sysLanguageOverlay[$overlayIdentifier] != 1
+			&& self::$sysLanguageOverlay[$overlayIdentifier] != 1
 			&& !empty($languageField)
 			&& $itemRecord[$languageField] != $language
 			&& $itemRecord[$languageField] != '-1'
