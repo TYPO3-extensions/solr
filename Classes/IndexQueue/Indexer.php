@@ -184,10 +184,10 @@ class Tx_Solr_IndexQueue_Indexer extends Tx_Solr_IndexQueue_AbstractIndexer {
 		$rootPageUid = $item->getRootPageUid();
 		$overlayIdentifier = $rootPageUid . '|' . $language;
 		if (!isset(self::$sysLanguageOverlay[$overlayIdentifier])) {
-			Tx_Solr_Util::initializeTsfe($rootPageUid, $language);
 			self::$sysLanguageContent[$overlayIdentifier] = $GLOBALS['TSFE']->sys_language_content;
 			self::$sysLanguageOverlay[$overlayIdentifier] = $GLOBALS['TSFE']->sys_language_contentOL;
 		}
+		Tx_Solr_Util::initializeTsfe($rootPageUid, $language);
 
 		$itemRecord = $item->getRecord();
 
